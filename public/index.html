@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>INC ATLAS PRESENTS BRAND ROULETTE</title>
+
+  <script src="/socket.io/socket.io.js"></script>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #09090d;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      padding: 25px;
+    }
+
+    .brand {
+      text-align: center;
+      color: #aaa;
+      font-weight: bold;
+      letter-spacing: 3px;
+      font-size: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: clamp(32px, 6vw, 65px);
+      margin: 10px 0;
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #999;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .card {
+      background: #15151c;
+      border: 1px solid #292934;
+      border-radius: 22px;
+      padding: 25px;
+      margin: 18px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      margin-top: 10px;
+
+      border-radius: 13px;
+      border: 1px solid #383844;
+
+      background: #22222b;
+      color: white;
+
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 12px;
+
+      border: none;
+      border-radius: 13px;
+
+      font-size: 16px;
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+    button:hover {
+      transform: scale(1.01);
+    }
+
+    .primary {
+      background: white;
+      color: black;
+    }
+
+    .red {
+      background: #d9233e;
+      color: white;
+    }
+
+    .big-buzzer {
+      width: 300px;
+      height: 300px;
+
+      border-radius: 50%;
+
+      background: #d9233e;
+      color: white;
+
+      font-size: 45px;
+      font-weight: 900;
+
+      display: block;
+      margin: 30px auto;
+
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .big-buzzer:active {
+      transform: scale(0.95);
+    }
+
+    .big-buzzer:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .room-code {
+      text-align: center;
+
+      font-size: 55px;
+      font-weight: 900;
+
+      letter-spacing: 10px;
+
+      margin: 20px 0;
+    }
+
+    .status {
+      text-align: center;
+      font-size: 20px;
+      color: #ccc;
+      margin: 20px;
+    }
+
+    .winner {
+      text-align: center;
+
+      font-size: 45px;
+      font-weight: 900;
+
+      padding: 30px;
+
+      border: 2px solid white;
+      border-radius: 18px;
+    }
+
+    .pill {
+      display: inline-block;
+
+      background: #292934;
+
+      border-radius: 50px;
+
+      padding: 8px 14px;
+
+      margin: 4px;
+    }
+
+    ol {
+      padding-left: 25px;
+    }
+
+    li {
+      padding: 12px;
+
+      border-bottom:
+        1px solid #292934;
+
+      font-size: 18px;
+    }
+
+    .small {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .error {
+      color: #ff5964;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 600px) {
+
+      .container {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 35px;
+      }
+
+      .big-buzzer {
+        width: 250px;
+        height: 250px;
+        font-size: 38px;
+      }
+
+      .room-code {
+        font-size: 42px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+  <!-- ========================= -->
+  <!-- HEADER -->
+  <!-- ========================= -->
+
+  <div class="brand">
+    INC ATLAS
+  </div>
+
+  <h1>
+    INC ATLAS PRESENTS
+    <br>
+    BRAND ROULETTE
+  </h1>
+
+  <div class="subtitle">
+    LIVE QUIZ BUZZER • UP TO 100 PLAYERS
+  </div>
+
+
+  <!-- ========================= -->
+  <!-- HOME SCREEN -->
+  <!-- ========================= -->
+
+  <section
+    id="home"
+    class="card"
+  >
+
+    <div class="grid">
+
+      <!-- HOST -->
+
+      <div>
+
+        <h2>🎤 Host</h2>
+
+        <p class="small">
+          Create a room on the laptop/projector.
+        </p>
+
+        <button
+          class="primary"
+          onclick="createRoom()"
+        >
+          CREATE HOST ROOM
+        </button>
+
+      </div>
+
+
+      <!-- PLAYER -->
+
+      <div>
+
+        <h2>📱 Player</h2>
+
+        <p class="small">
+          Enter the 6-digit room code shown by the host.
+        </p>
+
+        <input
+          id="code"
+          placeholder="Room Code"
+          maxlength="6"
+          inputmode="numeric"
+        >
+
+        <input
+          id="name"
+          placeholder="Your Name"
+          maxlength="30"
+        >
+
+        <button
+          class="primary"
+          onclick="joinPlayer()"
+        >
+          JOIN BUZZER
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="error"
+      class="error"
+    ></div>
+
+  </section>
+
+
+  <!-- ========================= -->
+  <!-- HOST SCREEN -->
+  <!-- ========================= -->
+
+  <section
+    id="host"
+    class="hidden"
+  >
+
+    <div class="card">
+
+      <h2>
+        🎤 HOST SCREEN
+      </h2>
+
+      <p class="small">
+        Tell everyone to open this website
+        and enter this code.
+      </p>
+
+      <div
+        id="roomCode"
+        class="room-code"
+      >
+        ------
+      </div>
+
+      <button
+        class="primary"
+        onclick="newRound()"
+      >
+        🔄 NEW ROUND
+      </button>
+
+    </div>
+
+
+    <!-- WINNER -->
+
+    <div class="card">
+
+      <div
+        id="winner"
+        class="winner"
+      >
+        WAITING...
+      </div>
+
+      <div
+        id="hostStatus"
+        class="status"
+      >
+        🟢 BUZZER READY
+      </div>
+
+    </div>
+
+
+    <!-- BUZZ ORDER -->
+
+    <div class="card">
+
+      <h2>
+        🏆 Buzz Order
+      </h2>
+
+      <ol id="buzzes">
+
+        <li class="small">
+          Nobody has buzzed yet.
+        </li>
+
+      </ol>
+
+    </div>
+
+
+    <!-- PLAYERS -->
+
+    <div class="card">
+
+      <h2>
+        👥 Players Online:
+        <span id="count">
+          0
+        </span>
+        /100
+      </h2>
+
+      <div id="players"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================= -->
+  <!-- PLAYER SCREEN -->
+  <!-- ========================= -->
+
+  <section
+    id="player"
+    class="hidden"
+  >
+
+    <div class="card">
+
+      <h2
+        id="welcome"
+        style="text-align:center"
+      >
+        Welcome!
+      </h2>
+
+      <div
+        id="playerStatus"
+        class="status"
+      >
+        🟢 BUZZER READY
+      </div>
+
+
+      <button
+        id="buzzButton"
+        class="big-buzzer"
+        onclick="buzz()"
+      >
+        BUZZ!
+      </button>
+
+
+      <div
+        id="playerResult"
+        class="status"
+      ></div>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<script>
+
+  // =========================
+  // CONNECT TO SERVER
+  // =========================
+
+  const socket = io();
+
+  let mode = "";
+  let room = "";
+  let myName = "";
+
+
+  // =========================
+  // HELPER
+  // =========================
+
+  function showScreen(screen) {
+
+    document
+      .getElementById("home")
+      .classList.add("hidden");
+
+    document
+      .getElementById("host")
+      .classList.add("hidden");
+
+    document
+      .getElementById("player")
+      .classList.add("hidden");
+
+    document
+      .getElementById(screen)
+      .classList.remove("hidden");
+  }
+
+
+  function showError(message) {
+
+    document
+      .getElementById("error")
+      .textContent = message || "";
+
+  }
+
+
+  function escapeHTML(text) {
+
+    return text.replace(
+      /[&<>"']/g,
+      function(character) {
+
+        return {
+
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+
+        }[character];
+
+      }
+    );
+
+  }
+
+
+  // =========================
+  // CREATE HOST ROOM
+  // =========================
+
+  function createRoom() {
+
+    socket.emit(
+      "host:create",
+      {},
+      function(response) {
+
+        if (!response.ok) {
+
+          showError(
+            response.error ||
+            "Unable to create room."
+          );
+
+          return;
+
+        }
+
+        room = response.code;
+
+        mode = "host";
+
+        document
+          .getElementById("roomCode")
+          .textContent = room;
+
+        showScreen("host");
+
+      }
+    );
+
+  }
+
+
+  // =========================
+  // PLAYER JOIN
+  // =========================
+
+  function joinPlayer() {
+
+    const code =
+      document
+        .getElementById("code")
+        .value
+        .trim();
+
+    const name =
+      document
+        .getElementById("name")
+        .value
+        .trim();
+
+
+    if (!code) {
+
+      showError(
+        "Please enter the room code."
+      );
+
+      return;
+
+    }
+
+
+    if (!name) {
+
+      showError(
+        "Please enter your name."
+      );
+
+      return;
+
+    }
+
+
+    room = code;
+
+    myName = name;
+
+
+    socket.emit(
+      "player:join",
+      {
+        code: code,
+        name: name
+      },
+
+      function(response) {
+
+        if (!response.ok) {
+
+          showError(
+            response.error ||
+            "Unable to join room."
+          );
+
+          return;
+
+        }
+
+        mode = "player";
+
+        document
+          .getElementById("welcome")
+          .textContent =
+          "HEY, " +
+          response.name +
+          " 👋";
+
+        showScreen("player");
+
+      }
+    );
+
+  }
+
+
+  // =========================
+  // BUZZ
+  // =========================
+
+  function buzz() {
+
+    const button =
+      document
+        .getElementById("buzzButton");
+
+
+    button.disabled = true;
+
+
+    socket.emit(
+      "buzz",
+      {},
+
+      function(response) {
+
+        if (!response.ok) {
+
+          button.disabled = false;
+
+        }
+
+      }
+    );
+
+  }
+
+
+  // =========================
+  // NEW ROUND
+  // =========================
+
+  function newRound() {
+
+    socket.emit(
+      "host:newRound"
+    );
+
+  }
+
+
+  // =========================
+  // SERVER STATE UPDATE
+  // =========================
+
+  socket.on(
+    "state",
+    function(state) {
+
+
+      // =====================
+      // HOST
+      // =====================
+
+      if (mode === "host") {
+
+        const winner =
+          document
+            .getElementById("winner");
+
+        const status =
+          document
+            .getElementById("hostStatus");
+
+
+        if (state.buzzes.length > 0) {
+
+          winner.textContent =
+            state.buzzes[0].name;
+
+          status.textContent =
+            "🔒 BUZZER LOCKED — FIRST BUZZ WINS";
+
+        } else {
+
+          winner.textContent =
+            "WAITING...";
+
+          status.textContent =
+            "🟢 BUZZER LIVE — WAITING FOR BUZZ";
+
+        }
+
+
+        // BUZZ ORDER
+
+        const buzzList =
+          document
+            .getElementById("buzzes");
+
+
+        if (state.buzzes.length === 0) {
+
+          buzzList.innerHTML =
+            "<li class='small'>" +
+            "Nobody has buzzed yet." +
+            "</li>";
+
+        } else {
+
+          buzzList.innerHTML =
+            state.buzzes
+              .map(function(buzz) {
+
+                return `
+                  <li>
+                    <b>
+                      #${buzz.rank}
+                      ${escapeHTML(buzz.name)}
+                    </b>
+                  </li>
+                `;
+
+              })
+              .join("");
+
+        }
+
+
+        // PLAYER COUNT
+
+        document
+          .getElementById("count")
+          .textContent =
+          state.players.length;
+
+
+        // PLAYER NAMES
+
+        document
+          .getElementById("players")
+          .innerHTML =
+          state.players
+            .map(function(player) {
+
+              return `
+                <span class="pill">
+                  ${escapeHTML(player.name)}
+                </span>
+              `;
+
+            })
+            .join("");
+
+      }
+
+
+      // =====================
+      // PLAYER
+      // =====================
+
+      if (mode === "player") {
+
+        const button =
+          document
+            .getElementById("buzzButton");
+
+        const status =
+          document
+            .getElementById("playerStatus");
+
+        const result =
+          document
+            .getElementById("playerResult");
+
+
+        const myBuzz =
+          state.buzzes.find(
+            function(buzz) {
+
+              return buzz.name === myName;
+
+            }
+          );
+
+
+        if (state.locked) {
+
+          button.disabled = true;
+
+
+          if (myBuzz) {
+
+            status.textContent =
+              "🎉 YOU BUZZED FIRST!";
+
+            result.textContent =
+              "Get ready to answer!";
+
+          } else {
+
+            status.textContent =
+              "🔒 TOO LATE!";
+
+            result.textContent =
+              "Someone else buzzed first.";
+
+          }
+
+        } else {
+
+          button.disabled = false;
+
+          status.textContent =
+            "🟢 BUZZER LIVE";
+
+          result.textContent =
+            "Tap when you know the answer!";
+
+        }
+
+      }
+
+    }
+  );
+
+
+  // =========================
+  // HOST DISCONNECTED
+  // =========================
+
+  socket.on(
+    "hostGone",
+    function() {
+
+      if (mode === "player") {
+
+        document
+          .getElementById("playerStatus")
+          .textContent =
+          "⚠️ HOST DISCONNECTED";
+
+        document
+          .getElementById("buzzButton")
+          .disabled = true;
+
+      }
+
+    }
+  );
+
+</script>
+
+</body>
+</html>
