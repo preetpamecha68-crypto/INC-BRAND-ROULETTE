@@ -7,10 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Serve the website
 app.use(express.static(path.join(__dirname, "public")));
 
-// Store all active rooms
 const rooms = new Map();
 
 function cleanName(name) {
@@ -26,45 +24,36 @@ function getRoom(code) {
       host: null,
       players: new Map(),
       buzzes: [],
-      round: 0,
-      locked: false
+      round: 0
     });
   }
 
   return rooms.get(code);
 }
 
-function roomSnapshot(room) {
-  return {
-    players: [...room.players.entries()].map(([id, name]) => ({
-      id,
-      name
-    })),
 
-    buzzes: room.buzzes.map((buzz, index) => ({
-      rank: index + 1,
-      name: buzz.name,
-      time: buzz.time
-    })),
+/* =========================
+   CONNECTION
+========================= */
 
-    locked: room.locked,
-    round: room.round
-  };
-}
+io.on("connection", socket => {
 
-io.on("connection", (socket) => {
 
-  // =========================
-  // HOST CREATES A ROOM
-  // =========================
+  /* =========================
+     CREATE HOST ROOM
+  ========================= */
 
   socket.on("host:create", (_, callback) => {
 
     let code;
 
     do {
-      code = Math.floor(100000 + Math.random() * 900000).toString();
+      code = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+
     } while (rooms.has(code));
+
 
     const room = getRoom(code);
 
@@ -75,218 +64,491 @@ io.on("connection", (socket) => {
     socket.data.room = code;
     socket.data.host = true;
 
+
     callback({
       ok: true,
       code
     });
 
-    io.to(code).emit("state", roomSnapshot(room));
+
+    io.to(code).emit(
+      "state",
+      snapshot(room)
+    );
+
   });
 
 
-  // =========================
-  // PLAYER JOINS
-  // =========================
 
-  socket.on("player:join", ({ code, name }, callback) => {
+  /* =========================
+     HOST JOIN
+  ========================= */
+
+  socket.on("host:join", ({ code }, callback) => {
 
     code = String(code || "").trim();
-    name = cleanName(name);
 
     const room = rooms.get(code);
 
-    if (!room || !room.host) {
+
+    if (!room) {
+
       return callback({
         ok: false,
-        error: "Room not found. Check the room code."
+        error: "Room not found"
       });
+
     }
 
-    if (room.players.size >= 100) {
+
+    if (room.host !== null) {
+
       return callback({
         ok: false,
-        error: "This room is full."
+        error: "This room already has a host"
       });
+
     }
 
-    if (!name) {
-      return callback({
-        ok: false,
-        error: "Please enter your name."
-      });
-    }
+
+    room.host = socket.id;
 
     socket.join(code);
 
     socket.data.room = code;
-    socket.data.player = true;
-    socket.data.name = name;
+    socket.data.host = true;
 
-    room.players.set(socket.id, name);
 
     callback({
       ok: true,
-      name
+      code
     });
 
-    io.to(code).emit("state", roomSnapshot(room));
+
+    io.to(code).emit(
+      "state",
+      snapshot(room)
+    );
+
   });
 
 
-  // =========================
-  // PLAYER BUZZES
-  // =========================
+
+  /* =========================
+     PLAYER JOIN
+  ========================= */
+
+  socket.on(
+    "player:join",
+    ({ code, name }, callback) => {
+
+      code = String(code || "").trim();
+
+      name = cleanName(name);
+
+      const room = rooms.get(code);
+
+
+      if (!room || !room.host) {
+
+        return callback({
+          ok: false,
+          error: "Room not found"
+        });
+
+      }
+
+
+      if (room.players.size >= 100) {
+
+        return callback({
+          ok: false,
+          error: "Room is full (100 players maximum)"
+        });
+
+      }
+
+
+      if (!name) {
+
+        return callback({
+          ok: false,
+          error: "Please enter your name"
+        });
+
+      }
+
+
+      /*
+        Prevent duplicate names.
+      */
+
+      const duplicate = [
+        ...room.players.values()
+      ].some(
+        existing =>
+          existing.toLowerCase() ===
+          name.toLowerCase()
+      );
+
+
+      if (duplicate) {
+
+        return callback({
+          ok: false,
+          error: "That name is already taken"
+        });
+
+      }
+
+
+      socket.join(code);
+
+      socket.data.room = code;
+      socket.data.player = true;
+      socket.data.name = name;
+
+
+      room.players.set(
+        socket.id,
+        name
+      );
+
+
+      callback({
+        ok: true,
+        name
+      });
+
+
+      io.to(code).emit(
+        "state",
+        snapshot(room)
+      );
+
+    }
+  );
+
+
+
+  /* =========================
+     PLAYER BUZZ
+  ========================= */
 
   socket.on("buzz", (_, callback) => {
 
     const code = socket.data.room;
+
     const room = rooms.get(code);
+
+
+    /*
+      Make sure this is actually
+      a player in a valid room.
+    */
 
     if (
       !room ||
       !socket.data.player ||
-      room.locked
+      !room.players.has(socket.id)
     ) {
+
       if (callback) {
         callback({
-          ok: false
+          ok: false,
+          error: "Not allowed"
         });
       }
 
       return;
     }
 
-    const playerName = room.players.get(socket.id);
 
-    if (!playerName) {
+    /*
+      IMPORTANT:
+      A player can buzz only ONCE
+      per round.
+    */
+
+    const alreadyBuzzed =
+      room.buzzes.some(
+        buzz => buzz.id === socket.id
+      );
+
+
+    if (alreadyBuzzed) {
+
+      if (callback) {
+        callback({
+          ok: false,
+          error: "You already buzzed"
+        });
+      }
+
       return;
     }
+
+
+    /*
+      Add player to the sequence.
+
+      The order in this array is the
+      exact order the server received
+      the buzzes.
+    */
 
     const buzz = {
+
       id: socket.id,
-      name: playerName,
+
+      name: room.players.get(
+        socket.id
+      ),
+
+      rank: room.buzzes.length + 1,
+
       time: Date.now()
+
     };
 
-    // Record the buzz
+
     room.buzzes.push(buzz);
 
-    // LOCK IMMEDIATELY
-    room.locked = true;
 
-    // Tell everyone
+    /*
+      Send the new sequence
+      immediately to EVERYONE.
+    */
+
     io.to(code).emit(
       "state",
-      roomSnapshot(room)
+      snapshot(room)
     );
+
 
     if (callback) {
+
       callback({
-        ok: true
+        ok: true,
+        rank: buzz.rank
       });
+
     }
+
   });
 
 
-  // =========================
-  // HOST STARTS NEW ROUND
-  // =========================
 
-  socket.on("host:newRound", () => {
+  /* =========================
+     NEW ROUND
+  ========================= */
 
-    const code = socket.data.room;
-    const room = rooms.get(code);
+  socket.on(
+    "host:newRound",
+    () => {
 
-    if (
-      !room ||
-      !socket.data.host
-    ) {
-      return;
+      const code = socket.data.room;
+
+      const room = rooms.get(code);
+
+
+      if (
+        !room ||
+        !socket.data.host ||
+        room.host !== socket.id
+      ) {
+        return;
+      }
+
+
+      /*
+        Clear the buzz sequence.
+        Everyone can buzz again.
+      */
+
+      room.buzzes = [];
+
+      room.round++;
+
+
+      io.to(code).emit(
+        "state",
+        snapshot(room)
+      );
+
     }
-
-    room.buzzes = [];
-    room.locked = false;
-    room.round++;
-
-    io.to(code).emit(
-      "state",
-      roomSnapshot(room)
-    );
-  });
+  );
 
 
-  // =========================
-  // HOST CLEARS PLAYERS
-  // =========================
 
-  socket.on("host:clear", () => {
+  /* =========================
+     CLEAR PLAYERS
+  ========================= */
 
-    const code = socket.data.room;
-    const room = rooms.get(code);
+  socket.on(
+    "host:clear",
+    () => {
 
-    if (
-      !room ||
-      !socket.data.host
-    ) {
-      return;
+      const code = socket.data.room;
+
+      const room = rooms.get(code);
+
+
+      if (
+        !room ||
+        !socket.data.host ||
+        room.host !== socket.id
+      ) {
+        return;
+      }
+
+
+      room.players.clear();
+
+      room.buzzes = [];
+
+      room.round++;
+
+
+      io.to(code).emit(
+        "state",
+        snapshot(room)
+      );
+
     }
-
-    room.players.clear();
-    room.buzzes = [];
-    room.locked = false;
-    room.round++;
-
-    io.to(code).emit(
-      "state",
-      roomSnapshot(room)
-    );
-  });
+  );
 
 
-  // =========================
-  // PLAYER / HOST DISCONNECT
-  // =========================
+
+  /* =========================
+     DISCONNECT
+  ========================= */
 
   socket.on("disconnect", () => {
 
     const code = socket.data.room;
+
     const room = rooms.get(code);
+
 
     if (!room) {
       return;
     }
 
-    // Host disconnected
-    if (socket.data.host) {
+
+    /*
+      Host disconnected.
+    */
+
+    if (
+      socket.data.host &&
+      room.host === socket.id
+    ) {
 
       room.host = null;
 
-      io.to(code).emit("hostGone");
+      io.to(code).emit(
+        "hostGone"
+      );
+
     }
 
-    // Player disconnected
+
+    /*
+      Player disconnected.
+    */
+
     if (socket.data.player) {
 
-      room.players.delete(socket.id);
-
-      io.to(code).emit(
-        "state",
-        roomSnapshot(room)
+      room.players.delete(
+        socket.id
       );
+
+      /*
+        If they already buzzed,
+        keep their buzz in the sequence.
+        This is important!
+      */
+
     }
+
+
+    io.to(code).emit(
+      "state",
+      snapshot(room)
+    );
+
+
+    /*
+      Delete completely empty rooms.
+    */
+
+    if (
+      room.host === null &&
+      room.players.size === 0
+    ) {
+
+      rooms.delete(code);
+
+    }
+
   });
 
 });
 
 
-// =========================
-// START SERVER
-// =========================
 
-const PORT = process.env.PORT || 3000;
+/* =========================
+   SEND ROOM STATE
+========================= */
 
-server.listen(PORT, () => {
-  console.log(
-    `Brand Roulette server running on port ${PORT}`
-  );
-});
+function snapshot(room) {
+
+  return {
+
+    players: [
+      ...room.players.entries()
+    ].map(
+      ([id, name]) => ({
+        id,
+        name
+      })
+    ),
+
+
+    buzzes: room.buzzes.map(
+      buzz => ({
+        id: buzz.id,
+        name: buzz.name,
+        rank: buzz.rank,
+        time: buzz.time
+      })
+    ),
+
+
+    round: room.round
+
+  };
+
+}
+
+
+
+/* =========================
+   START SERVER
+========================= */
+
+const PORT =
+  process.env.PORT || 3000;
+
+
+server.listen(
+  PORT,
+  () => {
+
+    console.log(
+      `Brand Roulette running on port ${PORT}`
+    );
+
+  }
+);
