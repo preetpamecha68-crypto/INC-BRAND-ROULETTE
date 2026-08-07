@@ -1,915 +1,713 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html>
 <head>
-  <meta charset="UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<title>INC ATLAS PRESENTS BRAND ROULETTE</title>
 
-  <title>INC ATLAS PRESENTS BRAND ROULETTE</title>
+<script src="/socket.io/socket.io.js"></script>
 
-  <script src="/socket.io/socket.io.js"></script>
+<style>
+* {
+  box-sizing: border-box;
+}
 
-  <style>
+body {
+  margin: 0;
+  background: #09090d;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+.wrap {
+  max-width: 1050px;
+  margin: auto;
+  padding: 24px;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #09090d;
-      color: white;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+.logo {
+  text-align: center;
+  color: #aaa;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
 
-    .container {
-      width: 100%;
-      max-width: 1100px;
-      margin: auto;
-      padding: 25px;
-    }
+h1 {
+  text-align: center;
+  font-size: clamp(30px, 6vw, 64px);
+  margin: 10px 0 4px;
+}
 
-    .brand {
-      text-align: center;
-      color: #aaa;
-      font-weight: bold;
-      letter-spacing: 3px;
-      font-size: 16px;
-    }
+.sub {
+  text-align: center;
+  color: #999;
+  margin-bottom: 28px;
+}
 
-    h1 {
-      text-align: center;
-      font-size: clamp(32px, 6vw, 65px);
-      margin: 10px 0;
-      line-height: 1.05;
-    }
+.card {
+  background: #15151c;
+  border: 1px solid #292934;
+  border-radius: 22px;
+  padding: 22px;
+  margin: 16px 0;
+}
 
-    .subtitle {
-      text-align: center;
-      color: #999;
-      margin-bottom: 30px;
-      font-size: 16px;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
 
-    .card {
-      background: #15151c;
-      border: 1px solid #292934;
-      border-radius: 22px;
-      padding: 25px;
-      margin: 18px 0;
-    }
+input,
+button {
+  width: 100%;
+  padding: 15px;
+  border-radius: 13px;
+  border: 0;
+  font-size: 16px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns:
-        repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
+input {
+  background: #22222b;
+  color: #fff;
+  border: 1px solid #383844;
+  margin-bottom: 10px;
+}
 
-    input {
-      width: 100%;
-      padding: 15px;
-      margin-top: 10px;
+button {
+  cursor: pointer;
+  font-weight: 800;
+  margin-top: 10px;
+}
 
-      border-radius: 13px;
-      border: 1px solid #383844;
+.primary {
+  background: #fff;
+  color: #000;
+}
 
-      background: #22222b;
-      color: white;
+.red {
+  background: #d9233e;
+  color: #fff;
+}
 
-      font-size: 16px;
-    }
+.big {
+  height: 280px;
+  border-radius: 50%;
+  font-size: 42px;
+  background: #d9233e;
+  color: #fff;
+  box-shadow: 0 20px 60px #0008;
+}
 
-    button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 12px;
+.big:hover {
+  transform: scale(1.02);
+}
 
-      border: none;
-      border-radius: 13px;
+.big:active {
+  transform: scale(.97);
+}
 
-      font-size: 16px;
-      font-weight: 800;
+.big:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
 
-      cursor: pointer;
-    }
+.code {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  text-align: center;
+}
 
-    button:hover {
-      transform: scale(1.01);
-    }
+.status {
+  text-align: center;
+  font-size: 20px;
+  color: #ccc;
+  margin: 16px;
+}
 
-    .primary {
-      background: white;
-      color: black;
-    }
+.winner {
+  text-align: center;
+  font-size: 42px;
+  font-weight: 900;
+  padding: 28px;
+  border: 2px solid #fff;
+  border-radius: 18px;
+}
 
-    .red {
-      background: #d9233e;
-      color: white;
-    }
+.hidden {
+  display: none;
+}
 
-    .big-buzzer {
-      width: 300px;
-      height: 300px;
+.pill {
+  display: inline-block;
+  background: #292934;
+  border-radius: 99px;
+  padding: 8px 12px;
+  margin: 4px;
+}
 
-      border-radius: 50%;
+.small {
+  color: #888;
+  font-size: 13px;
+}
 
-      background: #d9233e;
-      color: white;
+.sequence {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-      font-size: 45px;
-      font-weight: 900;
+.sequence li {
+  padding: 15px;
+  border-bottom: 1px solid #292934;
+  font-size: 20px;
+}
 
-      display: block;
-      margin: 30px auto;
+.rank {
+  display: inline-block;
+  width: 55px;
+  font-weight: 900;
+}
 
-      box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.6);
-    }
+.first {
+  font-size: 28px;
+  font-weight: 900;
+}
 
-    .big-buzzer:active {
-      transform: scale(0.95);
-    }
-
-    .big-buzzer:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    .room-code {
-      text-align: center;
-
-      font-size: 55px;
-      font-weight: 900;
-
-      letter-spacing: 10px;
-
-      margin: 20px 0;
-    }
-
-    .status {
-      text-align: center;
-      font-size: 20px;
-      color: #ccc;
-      margin: 20px;
-    }
-
-    .winner {
-      text-align: center;
-
-      font-size: 45px;
-      font-weight: 900;
-
-      padding: 30px;
-
-      border: 2px solid white;
-      border-radius: 18px;
-    }
-
-    .pill {
-      display: inline-block;
-
-      background: #292934;
-
-      border-radius: 50px;
-
-      padding: 8px 14px;
-
-      margin: 4px;
-    }
-
-    ol {
-      padding-left: 25px;
-    }
-
-    li {
-      padding: 12px;
-
-      border-bottom:
-        1px solid #292934;
-
-      font-size: 18px;
-    }
-
-    .small {
-      color: #888;
-      font-size: 14px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .error {
-      color: #ff5964;
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    @media (max-width: 600px) {
-
-      .container {
-        padding: 15px;
-      }
-
-      h1 {
-        font-size: 35px;
-      }
-
-      .big-buzzer {
-        width: 250px;
-        height: 250px;
-        font-size: 38px;
-      }
-
-      .room-code {
-        font-size: 42px;
-      }
-
-    }
-
-  </style>
+.you {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+}
+</style>
 </head>
-
 
 <body>
 
-<div class="container">
+<div class="wrap">
 
-  <!-- ========================= -->
-  <!-- HEADER -->
-  <!-- ========================= -->
+<div class="logo">INC ATLAS</div>
 
-  <div class="brand">
-    INC ATLAS
-  </div>
+<h1>
+INC ATLAS PRESENTS<br>
+BRAND ROULETTE
+</h1>
 
-  <h1>
-    INC ATLAS PRESENTS
-    <br>
-    BRAND ROULETTE
-  </h1>
+<div class="sub">
+LIVE QUIZ BUZZER • UP TO 100 PLAYERS
+</div>
 
-  <div class="subtitle">
-    LIVE QUIZ BUZZER • UP TO 100 PLAYERS
-  </div>
 
+<!-- HOME -->
 
-  <!-- ========================= -->
-  <!-- HOME SCREEN -->
-  <!-- ========================= -->
+<section id="home" class="card">
 
-  <section
-    id="home"
-    class="card"
-  >
+<div class="grid">
 
-    <div class="grid">
+<div>
 
-      <!-- HOST -->
+<h2>🎤 Host</h2>
 
-      <div>
+<p class="small">
+Create the room on the laptop/projector.
+</p>
 
-        <h2>🎤 Host</h2>
+<button
+class="primary"
+onclick="createRoom()">
+CREATE HOST ROOM
+</button>
 
-        <p class="small">
-          Create a room on the laptop/projector.
-        </p>
+</div>
 
-        <button
-          class="primary"
-          onclick="createRoom()"
-        >
-          CREATE HOST ROOM
-        </button>
 
-      </div>
+<div>
 
+<h2>📱 Player</h2>
 
-      <!-- PLAYER -->
+<p class="small">
+Enter the 6-digit room code shown by the host.
+</p>
 
-      <div>
+<input
+id="code"
+placeholder="Room code"
+inputmode="numeric"
+maxlength="6">
 
-        <h2>📱 Player</h2>
+<input
+id="name"
+placeholder="Your name"
+maxlength="30">
 
-        <p class="small">
-          Enter the 6-digit room code shown by the host.
-        </p>
+<button
+class="primary"
+onclick="joinPlayer()">
+JOIN BUZZER
+</button>
 
-        <input
-          id="code"
-          placeholder="Room Code"
-          maxlength="6"
-          inputmode="numeric"
-        >
+</div>
 
-        <input
-          id="name"
-          placeholder="Your Name"
-          maxlength="30"
-        >
+</div>
 
-        <button
-          class="primary"
-          onclick="joinPlayer()"
-        >
-          JOIN BUZZER
-        </button>
+<p id="err" class="small"></p>
 
-      </div>
+</section>
 
-    </div>
 
 
-    <div
-      id="error"
-      class="error"
-    ></div>
+<!-- HOST -->
 
-  </section>
+<section id="host" class="hidden">
 
+<div class="card">
 
-  <!-- ========================= -->
-  <!-- HOST SCREEN -->
-  <!-- ========================= -->
+<h2>🎤 HOST SCREEN</h2>
 
-  <section
-    id="host"
-    class="hidden"
-  >
+<div
+class="code"
+id="roomCode">
+</div>
 
-    <div class="card">
+<p class="status">
+Tell everyone to open the website and enter this code.
+</p>
 
-      <h2>
-        🎤 HOST SCREEN
-      </h2>
+<button
+class="primary"
+onclick="newRound()">
+🔄 NEW ROUND
+</button>
 
-      <p class="small">
-        Tell everyone to open this website
-        and enter this code.
-      </p>
+</div>
 
-      <div
-        id="roomCode"
-        class="room-code"
-      >
-        ------
-      </div>
 
-      <button
-        class="primary"
-        onclick="newRound()"
-      >
-        🔄 NEW ROUND
-      </button>
+<div class="card">
 
-    </div>
+<div
+class="winner"
+id="winner">
+WAITING FOR BUZZES...
+</div>
 
+<p
+class="status"
+id="hostStatus">
+🟢 BUZZERS READY
+</p>
 
-    <!-- WINNER -->
+</div>
 
-    <div class="card">
 
-      <div
-        id="winner"
-        class="winner"
-      >
-        WAITING...
-      </div>
+<div class="card">
 
-      <div
-        id="hostStatus"
-        class="status"
-      >
-        🟢 BUZZER READY
-      </div>
+<h2>
+🏆 BUZZ SEQUENCE
+</h2>
 
-    </div>
+<p class="small">
+Players are listed in the exact order they buzzed.
+</p>
 
+<ol
+class="sequence"
+id="buzzes">
+</ol>
 
-    <!-- BUZZ ORDER -->
+</div>
 
-    <div class="card">
 
-      <h2>
-        🏆 Buzz Order
-      </h2>
+<div class="card">
 
-      <ol id="buzzes">
+<h2>
+Players Online:
+<span id="count">0</span>/100
+</h2>
 
-        <li class="small">
-          Nobody has buzzed yet.
-        </li>
+<div id="players"></div>
 
-      </ol>
+</div>
 
-    </div>
+</section>
 
 
-    <!-- PLAYERS -->
 
-    <div class="card">
+<!-- PLAYER -->
 
-      <h2>
-        👥 Players Online:
-        <span id="count">
-          0
-        </span>
-        /100
-      </h2>
+<section id="player" class="hidden">
 
-      <div id="players"></div>
+<div class="card">
 
-    </div>
+<h2
+id="welcome">
+HEY! 👋
+</h2>
 
-  </section>
+<div
+class="status"
+id="pstatus">
+WAITING FOR THE HOST...
+</div>
 
 
-  <!-- ========================= -->
-  <!-- PLAYER SCREEN -->
-  <!-- ========================= -->
+<button
+id="buzz"
+class="big"
+onclick="buzz()">
 
-  <section
-    id="player"
-    class="hidden"
-  >
+BUZZ!
 
-    <div class="card">
+</button>
 
-      <h2
-        id="welcome"
-        style="text-align:center"
-      >
-        Welcome!
-      </h2>
 
-      <div
-        id="playerStatus"
-        class="status"
-      >
-        🟢 BUZZER READY
-      </div>
+<div
+class="you"
+id="pres">
+</div>
 
+</div>
 
-      <button
-        id="buzzButton"
-        class="big-buzzer"
-        onclick="buzz()"
-      >
-        BUZZ!
-      </button>
-
-
-      <div
-        id="playerResult"
-        class="status"
-      ></div>
-
-    </div>
-
-  </section>
+</section>
 
 </div>
 
 
 <script>
 
-  // =========================
-  // CONNECT TO SERVER
-  // =========================
+const socket = io();
 
-  const socket = io();
+let mode = "";
+let room = "";
+let playerName = "";
+let myBuzzRank = null;
 
-  let mode = "";
-  let room = "";
-  let myName = "";
 
+const $ = id =>
+document.getElementById(id);
 
-  // =========================
-  // HELPER
-  // =========================
 
-  function showScreen(screen) {
+function show(id) {
 
-    document
-      .getElementById("home")
-      .classList.add("hidden");
+["home", "host", "player"].forEach(x =>
+$(x).classList.add("hidden")
+);
 
-    document
-      .getElementById("host")
-      .classList.add("hidden");
+$(id).classList.remove("hidden");
 
-    document
-      .getElementById("player")
-      .classList.add("hidden");
+}
 
-    document
-      .getElementById(screen)
-      .classList.remove("hidden");
-  }
 
+function error(message) {
 
-  function showError(message) {
+$("err").textContent = message || "";
 
-    document
-      .getElementById("error")
-      .textContent = message || "";
+}
 
-  }
 
 
-  function escapeHTML(text) {
+/* CREATE HOST ROOM */
 
-    return text.replace(
-      /[&<>"']/g,
-      function(character) {
+function createRoom() {
 
-        return {
+socket.emit(
+"host:create",
+{},
+response => {
 
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;"
+if (!response.ok) {
 
-        }[character];
+error(response.error);
 
-      }
-    );
+return;
 
-  }
+}
 
+room = response.code;
 
-  // =========================
-  // CREATE HOST ROOM
-  // =========================
+$("roomCode").textContent = room;
 
-  function createRoom() {
+mode = "host";
 
-    socket.emit(
-      "host:create",
-      {},
-      function(response) {
+show("host");
 
-        if (!response.ok) {
+}
+);
 
-          showError(
-            response.error ||
-            "Unable to create room."
-          );
+}
 
-          return;
 
-        }
 
-        room = response.code;
+/* JOIN PLAYER */
 
-        mode = "host";
+function joinPlayer() {
 
-        document
-          .getElementById("roomCode")
-          .textContent = room;
+room = $("code").value.trim();
 
-        showScreen("host");
+playerName = $("name").value.trim();
 
-      }
-    );
 
-  }
+socket.emit(
+"player:join",
+{
+code: room,
+name: playerName
+},
+response => {
 
+if (!response.ok) {
 
-  // =========================
-  // PLAYER JOIN
-  // =========================
+error(response.error);
 
-  function joinPlayer() {
+return;
 
-    const code =
-      document
-        .getElementById("code")
-        .value
-        .trim();
+}
 
-    const name =
-      document
-        .getElementById("name")
-        .value
-        .trim();
+playerName = response.name;
 
+mode = "player";
 
-    if (!code) {
+$("welcome").textContent =
+"HEY, " + playerName + " 👋";
 
-      showError(
-        "Please enter the room code."
-      );
+show("player");
 
-      return;
+}
+);
 
-    }
+}
 
 
-    if (!name) {
 
-      showError(
-        "Please enter your name."
-      );
+/* BUZZ */
 
-      return;
+function buzz() {
 
-    }
+if (!playerName) return;
 
+socket.emit(
+"buzz",
+{},
+response => {
 
-    room = code;
+if (!response.ok) return;
 
-    myName = name;
+}
+);
 
+}
 
-    socket.emit(
-      "player:join",
-      {
-        code: code,
-        name: name
-      },
 
-      function(response) {
 
-        if (!response.ok) {
+/* NEW ROUND */
 
-          showError(
-            response.error ||
-            "Unable to join room."
-          );
+function newRound() {
 
-          return;
+myBuzzRank = null;
 
-        }
+socket.emit("host:newRound");
 
-        mode = "player";
+}
 
-        document
-          .getElementById("welcome")
-          .textContent =
-          "HEY, " +
-          response.name +
-          " 👋";
 
-        showScreen("player");
 
-      }
-    );
+/* RECEIVE LIVE STATE */
 
-  }
+socket.on(
+"state",
+state => {
 
 
-  // =========================
-  // BUZZ
-  // =========================
+/* ================= HOST ================= */
 
-  function buzz() {
+if (mode === "host") {
 
-    const button =
-      document
-        .getElementById("buzzButton");
 
+if (state.buzzes.length > 0) {
 
-    button.disabled = true;
+$("winner").textContent =
+"🥇 " + state.buzzes[0].name;
 
+$("hostStatus").textContent =
+"🔴 BUZZES COMING IN — #" +
+state.buzzes.length +
+" BUZZED";
 
-    socket.emit(
-      "buzz",
-      {},
+} else {
 
-      function(response) {
+$("winner").textContent =
+"WAITING FOR BUZZES...";
 
-        if (!response.ok) {
+$("hostStatus").textContent =
+"🟢 BUZZERS READY";
 
-          button.disabled = false;
+}
 
-        }
 
-      }
-    );
 
-  }
+/* BUZZ SEQUENCE */
 
+$("buzzes").innerHTML =
+state.buzzes.length
 
-  // =========================
-  // NEW ROUND
-  // =========================
+?
 
-  function newRound() {
+state.buzzes.map(
+buzz => {
 
-    socket.emit(
-      "host:newRound"
-    );
+let medal = "";
 
-  }
+if (buzz.rank === 1)
+medal = "🥇";
 
+else if (buzz.rank === 2)
+medal = "🥈";
 
-  // =========================
-  // SERVER STATE UPDATE
-  // =========================
+else if (buzz.rank === 3)
+medal = "🥉";
 
-  socket.on(
-    "state",
-    function(state) {
 
+return `
+<li>
+<span class="rank">
+${medal || "#" + buzz.rank}
+</span>
 
-      // =====================
-      // HOST
-      // =====================
+<b>
+${esc(buzz.name)}
+</b>
+</li>
+`;
 
-      if (mode === "host") {
+}
+).join("")
 
-        const winner =
-          document
-            .getElementById("winner");
+:
 
-        const status =
-          document
-            .getElementById("hostStatus");
+"<li class='small'>Nobody has buzzed yet.</li>";
 
 
-        if (state.buzzes.length > 0) {
 
-          winner.textContent =
-            state.buzzes[0].name;
+/* PLAYER COUNT */
 
-          status.textContent =
-            "🔒 BUZZER LOCKED — FIRST BUZZ WINS";
+$("count").textContent =
+state.players.length;
 
-        } else {
 
-          winner.textContent =
-            "WAITING...";
 
-          status.textContent =
-            "🟢 BUZZER LIVE — WAITING FOR BUZZ";
+/* ONLINE PLAYERS */
 
-        }
+$("players").innerHTML =
+state.players.map(
+player =>
+`
+<span class="pill">
+${esc(player.name)}
+</span>
+`
+).join("");
 
+}
 
-        // BUZZ ORDER
 
-        const buzzList =
-          document
-            .getElementById("buzzes");
 
+/* ================= PLAYER ================= */
 
-        if (state.buzzes.length === 0) {
+if (mode === "player") {
 
-          buzzList.innerHTML =
-            "<li class='small'>" +
-            "Nobody has buzzed yet." +
-            "</li>";
 
-        } else {
+/*
+Find THIS player's buzz
+using their socket ID.
+*/
 
-          buzzList.innerHTML =
-            state.buzzes
-              .map(function(buzz) {
+const myBuzz =
+state.buzzes.find(
+buzz =>
+buzz.id === socket.id
+);
 
-                return `
-                  <li>
-                    <b>
-                      #${buzz.rank}
-                      ${escapeHTML(buzz.name)}
-                    </b>
-                  </li>
-                `;
 
-              })
-              .join("");
+if (myBuzz) {
 
-        }
+myBuzzRank = myBuzz.rank;
 
+$("buzz").disabled = true;
 
-        // PLAYER COUNT
+$("buzz").textContent =
+"YOU'RE #" + myBuzz.rank;
 
-        document
-          .getElementById("count")
-          .textContent =
-          state.players.length;
+$("pres").textContent =
+"🔥 You buzzed #" +
+myBuzz.rank +
+" in the sequence!";
 
+$("pstatus").textContent =
+"BUZZ RECORDED ✅";
 
-        // PLAYER NAMES
 
-        document
-          .getElementById("players")
-          .innerHTML =
-          state.players
-            .map(function(player) {
+} else {
 
-              return `
-                <span class="pill">
-                  ${escapeHTML(player.name)}
-                </span>
-              `;
+$("buzz").disabled = false;
 
-            })
-            .join("");
+$("buzz").textContent =
+"BUZZ!";
 
-      }
+$("pres").textContent = "";
 
+$("pstatus").textContent =
+"🟢 TAP BUZZ AS FAST AS YOU CAN!";
 
-      // =====================
-      // PLAYER
-      // =====================
+}
 
-      if (mode === "player") {
+}
 
-        const button =
-          document
-            .getElementById("buzzButton");
+}
+);
 
-        const status =
-          document
-            .getElementById("playerStatus");
 
-        const result =
-          document
-            .getElementById("playerResult");
 
+/* HOST DISCONNECTED */
 
-        const myBuzz =
-          state.buzzes.find(
-            function(buzz) {
+socket.on(
+"hostGone",
+() => {
 
-              return buzz.name === myName;
+if (mode === "player") {
 
-            }
-          );
+$("pstatus").textContent =
+"Host disconnected. Please wait.";
 
+$("buzz").disabled = true;
 
-        if (state.locked) {
+}
 
-          button.disabled = true;
+}
+);
 
 
-          if (myBuzz) {
 
-            status.textContent =
-              "🎉 YOU BUZZED FIRST!";
+/* SECURITY / HTML ESCAPE */
 
-            result.textContent =
-              "Get ready to answer!";
+function esc(value) {
 
-          } else {
+return String(value).replace(
+/[&<>"']/g,
+character => ({
 
-            status.textContent =
-              "🔒 TOO LATE!";
+"&": "&amp;",
+"<": "&lt;",
+">": "&gt;",
+'"': "&quot;",
+"'": "&#39;"
 
-            result.textContent =
-              "Someone else buzzed first.";
+}[character])
 
-          }
+);
 
-        } else {
-
-          button.disabled = false;
-
-          status.textContent =
-            "🟢 BUZZER LIVE";
-
-          result.textContent =
-            "Tap when you know the answer!";
-
-        }
-
-      }
-
-    }
-  );
-
-
-  // =========================
-  // HOST DISCONNECTED
-  // =========================
-
-  socket.on(
-    "hostGone",
-    function() {
-
-      if (mode === "player") {
-
-        document
-          .getElementById("playerStatus")
-          .textContent =
-          "⚠️ HOST DISCONNECTED";
-
-        document
-          .getElementById("buzzButton")
-          .disabled = true;
-
-      }
-
-    }
-  );
+}
 
 </script>
 
