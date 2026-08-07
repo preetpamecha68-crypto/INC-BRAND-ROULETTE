@@ -5,64 +5,43 @@ const path = require("path");
 
 const app = express();
 
-const server = http.createServer(app);
+const server =
+  http.createServer(app);
 
-const io = new Server(server, {
-  pingInterval: 10000,
-  pingTimeout: 30000,
-  maxHttpBufferSize: 1e6
-});
+const io =
+  new Server(server, {
+
+    pingInterval: 10000,
+
+    pingTimeout: 30000,
+
+    maxHttpBufferSize: 1e6
+
+  });
 
 
 app.use(
   express.static(
-    path.join(__dirname, "public")
+    path.join(
+      __dirname,
+      "public"
+    )
   )
 );
 
 
-/*
-==================================================
-ROOM STORAGE
-==================================================
-*/
+/* ==========================================
+   ROOMS
+========================================== */
 
-const rooms = new Map();
-
-
-function createRoom(code) {
-
-  const room = {
-
-    code,
-
-    host: null,
-
-    players: new Map(),
-
-    buzzes: [],
-
-    round: 1
-
-  };
-
-  rooms.set(code, room);
-
-  return room;
-
-}
-
-
-function getRoom(code) {
-
-  return rooms.get(code);
-
-}
+const rooms =
+  new Map();
 
 
 function generateCode() {
 
   let code;
+
 
   do {
 
@@ -72,47 +51,44 @@ function generateCode() {
         Math.random() * 900000
       ).toString();
 
-  } while (rooms.has(code));
+  }
+  while (
+    rooms.has(code)
+  );
+
 
   return code;
 
 }
 
 
-
-/*
-==================================================
-CLEAN NAME
-==================================================
-*/
-
 function cleanName(name) {
 
-  return String(name || "")
+  return String(
+    name || ""
+  )
     .trim()
     .slice(0, 30)
-    .replace(/[<>]/g, "");
+    .replace(
+      /[<>]/g,
+      ""
+    );
 
 }
 
 
-
-/*
-==================================================
-SOCKET CONNECTION
-==================================================
-*/
+/* ==========================================
+   SOCKET CONNECTION
+========================================== */
 
 io.on(
   "connection",
   socket => {
 
 
-    /*
-    ==============================================
-    CREATE HOST
-    ==============================================
-    */
+    /* ======================================
+       CREATE HOST ROOM
+    ====================================== */
 
     socket.on(
       "host:create",
@@ -121,61 +97,97 @@ io.on(
         const code =
           generateCode();
 
-        const room =
-          createRoom(code);
+
+        const room = {
+
+          code,
+
+          host: socket.id,
+
+          players:
+            new Map(),
+
+          buzzes: [],
+
+          round: 1
+
+        };
 
 
-        room.host = socket.id;
+        rooms.set(
+          code,
+          room
+        );
 
 
-        socket.join(code);
+        socket.join(
+          code
+        );
 
-        socket.data.room = code;
 
-        socket.data.role = "host";
+        socket.data.room =
+          code;
+
+        socket.data.role =
+          "host";
 
 
         callback({
+
           ok: true,
+
           code
+
         });
 
 
-        sendState(room);
+        sendState(
+          room
+        );
 
       }
     );
 
 
 
-    /*
-    ==============================================
-    PLAYER JOIN
-    ==============================================
-    */
+    /* ======================================
+       PLAYER JOIN
+    ====================================== */
 
     socket.on(
       "player:join",
-      ({ code, name }, callback) => {
+      (
+        { code, name },
+        callback
+      ) => {
 
         code =
-          String(code || "")
-            .trim();
+          String(
+            code || ""
+          ).trim();
 
 
         name =
-          cleanName(name);
+          cleanName(
+            name
+          );
 
 
         const room =
-          getRoom(code);
+          rooms.get(
+            code
+          );
 
 
         if (!room) {
 
           return callback({
+
             ok: false,
-            error: "Room not found."
+
+            error:
+              "Room not found."
+
           });
 
         }
@@ -184,19 +196,28 @@ io.on(
         if (!room.host) {
 
           return callback({
+
             ok: false,
-            error: "Host is not connected."
+
+            error:
+              "Host is reconnecting. Please try again in a few seconds."
+
           });
 
         }
 
 
-        if (room.players.size >= 100) {
+        if (
+          room.players.size >= 100
+        ) {
 
           return callback({
+
             ok: false,
+
             error:
               "Room is full (100 players maximum)."
+
           });
 
         }
@@ -205,23 +226,23 @@ io.on(
         if (!name) {
 
           return callback({
+
             ok: false,
+
             error:
               "Please enter your name."
+
           });
 
         }
 
 
-        /*
-          Prevent duplicate names.
-        */
-
         const duplicate =
           [...room.players.values()]
             .some(
               player =>
-                player.name.toLowerCase() ===
+                player.name
+                  .toLowerCase() ===
                 name.toLowerCase()
             );
 
@@ -229,9 +250,12 @@ io.on(
         if (duplicate) {
 
           return callback({
+
             ok: false,
+
             error:
               "That name is already in use."
+
           });
 
         }
@@ -239,13 +263,16 @@ io.on(
 
         const player = {
 
-          id: socket.id,
+          id:
+            socket.id,
 
           name,
 
-          connected: true,
+          connected:
+            true,
 
-          buzzed: false
+          buzzed:
+            false
 
         };
 
@@ -256,80 +283,109 @@ io.on(
         );
 
 
-        socket.join(code);
+        socket.join(
+          code
+        );
 
 
-        socket.data.room = code;
+        socket.data.room =
+          code;
 
-        socket.data.role = "player";
+        socket.data.role =
+          "player";
 
-        socket.data.playerName = name;
+        socket.data.playerName =
+          name;
 
 
         callback({
+
           ok: true,
+
           name
+
         });
 
 
-        sendState(room);
+        sendState(
+          room
+        );
 
       }
     );
 
 
 
-    /*
-    ==============================================
-    PLAYER RECONNECT AFTER RELOAD
-    ==============================================
-    */
+    /* ======================================
+       PLAYER RECONNECT
+    ====================================== */
 
     socket.on(
       "player:reconnect",
-      ({ code, name }, callback) => {
+      (
+        { code, name },
+        callback
+      ) => {
 
         code =
-          String(code || "")
-            .trim();
+          String(
+            code || ""
+          ).trim();
 
 
         name =
-          cleanName(name);
+          cleanName(
+            name
+          );
 
 
         const room =
-          getRoom(code);
+          rooms.get(
+            code
+          );
 
 
         if (!room) {
 
           return callback({
+
             ok: false,
-            error: "Room not found."
+
+            error:
+              "Room not found."
+
           });
 
         }
 
 
-        /*
-          Find the player by name.
-        */
+        let player =
+          null;
 
-        let existingPlayer = null;
+
+        let oldId =
+          null;
 
 
         for (
-          const player
-          of room.players.values()
+          const [
+            id,
+            existing
+          ]
+          of room.players
         ) {
 
           if (
-            player.name.toLowerCase() ===
+            existing.name
+              .toLowerCase() ===
             name.toLowerCase()
           ) {
 
-            existingPlayer = player;
+            player =
+              existing;
+
+            oldId =
+              id;
 
             break;
 
@@ -338,29 +394,18 @@ io.on(
         }
 
 
-        if (!existingPlayer) {
+        if (!player) {
 
           return callback({
+
             ok: false,
+
             error:
-              "Your previous session was not found."
+              "Previous player session not found."
+
           });
 
         }
-
-
-        /*
-          IMPORTANT:
-
-          Replace the old socket ID
-          with the new socket ID.
-
-          This means refreshing the page
-          does NOT create a new player.
-        */
-
-        const oldId =
-          existingPlayer.id;
 
 
         room.players.delete(
@@ -368,23 +413,25 @@ io.on(
         );
 
 
-        existingPlayer.id =
+        player.id =
           socket.id;
 
 
-        existingPlayer.connected =
+        player.connected =
           true;
 
 
         room.players.set(
           socket.id,
-          existingPlayer
+          player
         );
 
 
         /*
-          Update any existing buzz
-          belonging to this player.
+          IMPORTANT:
+
+          Move their existing buzz
+          to the new socket ID.
         */
 
         room.buzzes.forEach(
@@ -403,35 +450,43 @@ io.on(
         );
 
 
-        socket.join(code);
+        socket.join(
+          code
+        );
 
 
-        socket.data.room = code;
+        socket.data.room =
+          code;
 
-        socket.data.role = "player";
+        socket.data.role =
+          "player";
 
         socket.data.playerName =
-          existingPlayer.name;
+          player.name;
 
 
         callback({
+
           ok: true,
-          name: existingPlayer.name
+
+          name:
+            player.name
+
         });
 
 
-        sendState(room);
+        sendState(
+          room
+        );
 
       }
     );
 
 
 
-    /*
-    ==============================================
-    BUZZ
-    ==============================================
-    */
+    /* ======================================
+       BUZZ
+    ====================================== */
 
     socket.on(
       "buzz",
@@ -442,18 +497,24 @@ io.on(
 
 
         const room =
-          getRoom(code);
+          rooms.get(
+            code
+          );
 
 
         if (
           !room ||
-          socket.data.role !== "player"
+          socket.data.role !==
+            "player"
         ) {
 
           return callback({
+
             ok: false,
+
             error:
               "You are not in a room."
+
           });
 
         }
@@ -468,38 +529,48 @@ io.on(
         if (!player) {
 
           return callback({
+
             ok: false,
+
             error:
               "Player session not found."
+
           });
 
         }
 
 
         /*
-          Only ONE buzz per player
-          per round.
+          ONE BUZZ PER ROUND.
         */
 
-        if (player.buzzed) {
+        if (
+          player.buzzed
+        ) {
 
           return callback({
+
             ok: false,
+
             error:
               "You already buzzed this round."
+
           });
 
         }
 
 
-        player.buzzed = true;
+        player.buzzed =
+          true;
 
 
         const buzz = {
 
-          id: socket.id,
+          id:
+            socket.id,
 
-          name: player.name,
+          name:
+            player.name,
 
           rank:
             room.buzzes.length + 1,
@@ -507,7 +578,8 @@ io.on(
           round:
             room.round,
 
-          time: Date.now()
+          time:
+            Date.now()
 
         };
 
@@ -521,23 +593,24 @@ io.on(
 
           ok: true,
 
-          rank: buzz.rank
+          rank:
+            buzz.rank
 
         });
 
 
-        sendState(room);
+        sendState(
+          room
+        );
 
       }
     );
 
 
 
-    /*
-    ==============================================
-    NEW ROUND
-    ==============================================
-    */
+    /* ======================================
+       NEW ROUND
+    ====================================== */
 
     socket.on(
       "host:newRound",
@@ -548,13 +621,17 @@ io.on(
 
 
         const room =
-          getRoom(code);
+          rooms.get(
+            code
+          );
 
 
         if (
           !room ||
-          socket.data.role !== "host" ||
-          room.host !== socket.id
+          socket.data.role !==
+            "host" ||
+          room.host !==
+            socket.id
         ) {
 
           return;
@@ -564,34 +641,33 @@ io.on(
 
         room.round++;
 
-        room.buzzes = [];
 
+        room.buzzes =
+          [];
 
-        /*
-          Reset everyone's buzz state.
-        */
 
         room.players.forEach(
           player => {
 
-            player.buzzed = false;
+            player.buzzed =
+              false;
 
           }
         );
 
 
-        sendState(room);
+        sendState(
+          room
+        );
 
       }
     );
 
 
 
-    /*
-    ==============================================
-    LEAVE ROOM
-    ==============================================
-    */
+    /* ======================================
+       LEAVE ROOM
+    ====================================== */
 
     socket.on(
       "leaveRoom",
@@ -602,13 +678,17 @@ io.on(
 
 
         const room =
-          getRoom(code);
+          rooms.get(
+            code
+          );
 
 
         if (!room) {
 
           if (callback)
-            callback({ ok: true });
+            callback({
+              ok: true
+            });
 
           return;
 
@@ -616,15 +696,18 @@ io.on(
 
 
         /*
-          HOST LEAVING
+          HOST LEAVES
         */
 
         if (
-          socket.data.role === "host" &&
-          room.host === socket.id
+          socket.data.role ===
+            "host" &&
+          room.host ===
+            socket.id
         ) {
 
-          room.host = null;
+          room.host =
+            null;
 
 
           io.to(code).emit(
@@ -635,11 +718,12 @@ io.on(
 
 
         /*
-          PLAYER LEAVING
+          PLAYER LEAVES
         */
 
         if (
-          socket.data.role === "player"
+          socket.data.role ===
+            "player"
         ) {
 
           room.players.delete(
@@ -647,20 +731,13 @@ io.on(
           );
 
 
-          /*
-            Remove their buzz too.
-          */
-
           room.buzzes =
             room.buzzes.filter(
               buzz =>
-                buzz.id !== socket.id
+                buzz.id !==
+                socket.id
             );
 
-
-          /*
-            Recalculate ranks.
-          */
 
           room.buzzes.forEach(
             (buzz, index) => {
@@ -674,23 +751,32 @@ io.on(
         }
 
 
-        socket.leave(code);
+        socket.leave(
+          code
+        );
 
 
-        socket.data.room = null;
+        socket.data.room =
+          null;
 
-        socket.data.role = null;
+        socket.data.role =
+          null;
 
 
-        sendState(room);
+        sendState(
+          room
+        );
 
 
         if (callback)
-          callback({ ok: true });
+          callback({
+            ok: true
+          });
 
 
         /*
-          Delete empty rooms.
+          Only delete completely
+          empty rooms.
         */
 
         if (
@@ -698,7 +784,9 @@ io.on(
           room.players.size === 0
         ) {
 
-          rooms.delete(code);
+          rooms.delete(
+            code
+          );
 
         }
 
@@ -707,11 +795,9 @@ io.on(
 
 
 
-    /*
-    ==============================================
-    DISCONNECT
-    ==============================================
-    */
+    /* ======================================
+       DISCONNECT
+    ====================================== */
 
     socket.on(
       "disconnect",
@@ -722,28 +808,33 @@ io.on(
 
 
         const room =
-          getRoom(code);
+          rooms.get(
+            code
+          );
 
 
-        if (!room) return;
+        if (!room)
+          return;
 
 
         /*
-          HOST DISCONNECT
+          IMPORTANT:
 
-          DO NOT DELETE ROOM.
+          DO NOT DELETE HOST.
 
-          This is important because
-          Render/browser connections can
-          temporarily disappear.
+          A reload temporarily disconnects
+          the socket.
         */
 
         if (
-          socket.data.role === "host" &&
-          room.host === socket.id
+          socket.data.role ===
+            "host" &&
+          room.host ===
+            socket.id
         ) {
 
-          room.host = null;
+          room.host =
+            null;
 
 
           io.to(code).emit(
@@ -754,15 +845,16 @@ io.on(
 
 
         /*
-          PLAYER DISCONNECT
+          IMPORTANT:
 
-          DO NOT DELETE PLAYER.
+          DO NOT DELETE PLAYERS.
 
-          This allows reload/reconnect.
+          They can reconnect after reload.
         */
 
         if (
-          socket.data.role === "player"
+          socket.data.role ===
+            "player"
         ) {
 
           const player =
@@ -781,7 +873,9 @@ io.on(
         }
 
 
-        sendState(room);
+        sendState(
+          room
+        );
 
       }
     );
@@ -791,98 +885,43 @@ io.on(
 
 
 
-/*
-==================================================
-STATE
-==================================================
-*/
+/* ==========================================
+   SEND STATE
+========================================== */
 
-function sendState(room) {
+function sendState(
+  room
+) {
 
-  if (!room) return;
+  if (!room)
+    return;
 
 
   const buzzes =
     room.buzzes.map(
       buzz => ({
-        id: buzz.id,
 
-        name: buzz.name,
+        id:
+          buzz.id,
 
-        rank: buzz.rank,
+        name:
+          buzz.name,
 
-        round: buzz.round,
+        rank:
+          buzz.rank,
 
-        time: buzz.time
+        round:
+          buzz.round,
+
+        time:
+          buzz.time
+
       })
     );
 
 
   /*
-    Send a personalized state
-    to each socket.
-
-    This lets a player know
-    their own buzz even after reload.
-  */
-
-  room.players.forEach(
-    player => {
-
-      if (!player.connected)
-        return;
-
-
-      const playerSocket =
-        io.sockets.sockets.get(
-          player.id
-        );
-
-
-      if (!playerSocket)
-        return;
-
-
-      const myBuzz =
-        room.buzzes.find(
-          buzz =>
-            buzz.id === player.id
-        );
-
-
-      playerSocket.emit(
-        "state",
-        {
-
-          players:
-            [...room.players.values()]
-              .filter(
-                p => p.connected
-              )
-              .map(
-                p => ({
-                  id: p.id,
-                  name: p.name
-                })
-              ),
-
-          buzzes,
-
-          myBuzz:
-            myBuzz || null,
-
-          round:
-            room.round
-
-        }
-      );
-
-    }
-  );
-
-
-  /*
-    Send host state.
+    HOST
   */
 
   if (room.host) {
@@ -902,12 +941,18 @@ function sendState(room) {
           players:
             [...room.players.values()]
               .filter(
-                p => p.connected
+                p =>
+                  p.connected
               )
               .map(
                 p => ({
-                  id: p.id,
-                  name: p.name
+
+                  id:
+                    p.id,
+
+                  name:
+                    p.name
+
                 })
               ),
 
@@ -923,18 +968,86 @@ function sendState(room) {
 
   }
 
+
+  /*
+    PLAYERS
+  */
+
+  room.players.forEach(
+    player => {
+
+      if (
+        !player.connected
+      )
+        return;
+
+
+      const playerSocket =
+        io.sockets.sockets.get(
+          player.id
+        );
+
+
+      if (!playerSocket)
+        return;
+
+
+      const myBuzz =
+        room.buzzes.find(
+          buzz =>
+            buzz.id ===
+            player.id
+        );
+
+
+      playerSocket.emit(
+        "state",
+        {
+
+          players:
+            [...room.players.values()]
+              .filter(
+                p =>
+                  p.connected
+              )
+              .map(
+                p => ({
+
+                  id:
+                    p.id,
+
+                  name:
+                    p.name
+
+                })
+              ),
+
+          buzzes,
+
+          myBuzz:
+            myBuzz ||
+            null,
+
+          round:
+            room.round
+
+        }
+      );
+
+    }
+  );
+
 }
 
 
 
-/*
-==================================================
-SERVER
-==================================================
-*/
+/* ==========================================
+   SERVER
+========================================== */
 
 const PORT =
-  process.env.PORT || 3000;
+  process.env.PORT ||
+  3000;
 
 
 server.listen(
