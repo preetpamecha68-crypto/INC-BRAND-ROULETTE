@@ -1,10 +1,9 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>INC ATLAS PRESENTS BRAND ROULETTE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INC Atlas Presents Brand Roulette</title>
 
 <script src="/socket.io/socket.io.js"></script>
 
@@ -13,206 +12,382 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg: #020b24;
+  --bg2: #061744;
+  --blue: #245cff;
+  --blue2: #4d7cff;
+  --text: #ffffff;
+  --muted: #aeb9d4;
+  --border: rgba(72,119,255,.45);
+}
+
 body {
   margin: 0;
-  background: #09090d;
-  color: #fff;
-  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 50% 45%, #092b78 0%, #04143d 38%, #020817 75%);
 }
 
-.wrap {
-  max-width: 1050px;
-  margin: auto;
-  padding: 24px;
-}
-
-.logo {
-  text-align: center;
-  color: #aaa;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-h1 {
-  text-align: center;
-  font-size: clamp(30px, 6vw, 64px);
-  margin: 10px 0 4px;
-}
-
-.sub {
-  text-align: center;
-  color: #999;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: #15151c;
-  border: 1px solid #292934;
-  border-radius: 22px;
-  padding: 22px;
-  margin: 16px 0;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px;
-}
-
-input,
-button {
-  width: 100%;
-  padding: 15px;
-  border-radius: 13px;
-  border: 0;
-  font-size: 16px;
-}
-
+button,
 input {
-  background: #22222b;
-  color: #fff;
-  border: 1px solid #383844;
-  margin-bottom: 10px;
+  font: inherit;
 }
 
 button {
   cursor: pointer;
-  font-weight: 800;
-  margin-top: 10px;
-}
-
-.primary {
-  background: #fff;
-  color: #000;
-}
-
-.red {
-  background: #d9233e;
-  color: #fff;
-}
-
-.big {
-  height: 280px;
-  border-radius: 50%;
-  font-size: 42px;
-  background: #d9233e;
-  color: #fff;
-  box-shadow: 0 20px 60px #0008;
-}
-
-.big:hover {
-  transform: scale(1.02);
-}
-
-.big:active {
-  transform: scale(.97);
-}
-
-.big:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-}
-
-.code {
-  font-size: 48px;
-  font-weight: 900;
-  letter-spacing: 8px;
-  text-align: center;
-}
-
-.status {
-  text-align: center;
-  font-size: 20px;
-  color: #ccc;
-  margin: 16px;
-}
-
-.winner {
-  text-align: center;
-  font-size: 42px;
-  font-weight: 900;
-  padding: 28px;
-  border: 2px solid #fff;
-  border-radius: 18px;
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
-.pill {
-  display: inline-block;
-  background: #292934;
-  border-radius: 99px;
-  padding: 8px 12px;
-  margin: 4px;
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.small {
-  color: #888;
-  font-size: 13px;
+header {
+  height: 92px;
+  padding: 18px 4%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(90,130,255,.3);
+  background: rgba(1,8,28,.55);
+  backdrop-filter: blur(15px);
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: -2px;
+}
+
+.logo small {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1px;
+  margin-top: -3px;
+  opacity: .8;
+}
+
+.brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.brand span {
+  color: #5b83ff;
+}
+
+.leave {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: white;
+  padding: 11px 17px;
+  border-radius: 12px;
+}
+
+main {
+  flex: 1;
+  width: min(1050px, 94%);
+  margin: auto;
+  padding: 35px 0;
+}
+
+.card {
+  background: rgba(2,12,40,.7);
+  border: 1px solid rgba(77,124,255,.35);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 70px rgba(0,0,0,.25);
+  backdrop-filter: blur(15px);
+}
+
+.center {
+  text-align: center;
+}
+
+h1 {
+  font-size: clamp(34px, 7vw, 65px);
+  margin: 15px 0;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  margin: 7px 0;
+  border-radius: 12px;
+  border: 1px solid #294a9d;
+  background: rgba(4,16,48,.9);
+  color: white;
+  outline: none;
+}
+
+input:focus {
+  border-color: #5b83ff;
+}
+
+.primary {
+  width: 100%;
+  padding: 15px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #255cff, #4b7bff);
+  color: white;
+  font-weight: 900;
+}
+
+.primary:hover {
+  filter: brightness(1.12);
+}
+
+.room {
+  width: min(270px, 90%);
+  margin: auto;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(0,0,0,.22);
+}
+
+.room-label {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.room-code {
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: 7px;
+  color: #4d7cff;
+  margin-top: 5px;
+}
+
+.player-name {
+  font-size: clamp(28px, 5vw, 45px);
+  font-weight: 900;
+  margin-top: 25px;
+}
+
+.player-name span {
+  color: #4d7cff;
+}
+
+.buzzer-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 35px auto;
+}
+
+.buzzer {
+  width: min(330px, 68vw);
+  height: min(330px, 68vw);
+  max-width: 330px;
+  max-height: 330px;
+  border-radius: 50%;
+  border: 12px solid rgba(0,0,0,.5);
+  background: radial-gradient(circle at 35% 25%, #527fff, #1948e8 55%, #0b2bb5);
+  box-shadow:
+    0 0 0 2px #4979ff,
+    0 0 60px rgba(36,92,255,.7),
+    inset 0 -20px 30px rgba(0,0,0,.25);
+  color: white;
+  font-size: clamp(34px, 7vw, 58px);
+  font-weight: 900;
+  transition: .12s;
+}
+
+.buzzer:active {
+  transform: scale(.96);
+}
+
+.buzzer:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+.status {
+  width: min(700px, 100%);
+  margin: auto;
+  padding: 18px;
+  border-radius: 15px;
+  border: 1px solid rgba(72,119,255,.35);
+  background: rgba(0,0,0,.2);
+  color: var(--muted);
+  text-align: center;
 }
 
 .sequence {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  margin-top: 25px;
 }
 
-.sequence li {
+.sequence-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
   padding: 15px;
-  border-bottom: 1px solid #292934;
-  font-size: 20px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
 .rank {
-  display: inline-block;
-  width: 55px;
+  width: 45px;
   font-weight: 900;
+  color: #5b83ff;
 }
 
-.first {
-  font-size: 28px;
-  font-weight: 900;
+.rank.big {
+  font-size: 25px;
 }
 
-.you {
-  margin-top: 20px;
+.players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.player-pill {
+  padding: 8px 12px;
+  border-radius: 100px;
+  background: #10275e;
+  border: 1px solid #284ca0;
+}
+
+footer {
   text-align: center;
-  font-size: 24px;
-  font-weight: 800;
+  padding: 18px;
+  color: #7180a4;
+  font-size: 14px;
+}
+
+.error {
+  color: #ff7184;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.success {
+  color: #65e89b;
+}
+
+@media(max-width: 700px) {
+
+  header {
+    height: 75px;
+    padding: 14px 18px;
+  }
+
+  .logo {
+    font-size: 21px;
+  }
+
+  .brand {
+    display: none;
+  }
+
+  .leave {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  main {
+    padding: 20px 0;
+  }
+
+  .card {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .buzzer-wrap {
+    margin: 25px auto;
+  }
+
+  footer {
+    padding-bottom: 25px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrap">
+<div class="page">
 
-<div class="logo">INC ATLAS</div>
+<header>
 
-<h1>
-INC ATLAS PRESENTS<br>
-BRAND ROULETTE
-</h1>
-
-<div class="sub">
-LIVE QUIZ BUZZER • UP TO 100 PLAYERS
+<div class="logo">
+INC
+<small>THE CORPORATE CLUB</small>
 </div>
 
+<div class="brand">
+BRAND <span>ROULETTE</span>
+</div>
+
+<button
+id="leaveBtn"
+class="leave hidden"
+onclick="leaveRoom()">
+Leave Room ↗
+</button>
+
+</header>
+
+
+<main>
 
 <!-- HOME -->
 
 <section id="home" class="card">
 
+<div class="center">
+
+<h1>BRAND <span style="color:#4d7cff">ROULETTE</span></h1>
+
+<p class="subtitle">
+INC ATLAS PRESENTS
+</p>
+
+</div>
+
 <div class="grid">
 
-<div>
+<div class="card">
 
 <h2>🎤 Host</h2>
 
-<p class="small">
-Create the room on the laptop/projector.
+<p class="subtitle">
+Create a room and display the code for everyone.
 </p>
 
 <button
@@ -224,28 +399,28 @@ CREATE HOST ROOM
 </div>
 
 
-<div>
+<div class="card">
 
 <h2>📱 Player</h2>
 
-<p class="small">
-Enter the 6-digit room code shown by the host.
+<p class="subtitle">
+Enter your room code and name.
 </p>
 
 <input
-id="code"
-placeholder="Room code"
-inputmode="numeric"
-maxlength="6">
+id="roomInput"
+placeholder="6-digit room code"
+maxlength="6"
+inputmode="numeric">
 
 <input
-id="name"
+id="nameInput"
 placeholder="Your name"
 maxlength="30">
 
 <button
 class="primary"
-onclick="joinPlayer()">
+onclick="joinRoom()">
 JOIN BUZZER
 </button>
 
@@ -253,7 +428,10 @@ JOIN BUZZER
 
 </div>
 
-<p id="err" class="small"></p>
+<div
+id="error"
+class="error">
+</div>
 
 </section>
 
@@ -263,17 +441,28 @@ JOIN BUZZER
 
 <section id="host" class="hidden">
 
-<div class="card">
+<div class="card center">
 
-<h2>🎤 HOST SCREEN</h2>
+<div class="room">
 
-<div
-class="code"
-id="roomCode">
+<div class="room-label">
+ROOM CODE
 </div>
 
-<p class="status">
-Tell everyone to open the website and enter this code.
+<div
+id="hostCode"
+class="room-code">
+------
+</div>
+
+</div>
+
+<h2 style="margin-top:25px">
+Waiting for players...
+</h2>
+
+<p class="subtitle">
+Players can join using the room code above.
 </p>
 
 <button
@@ -285,49 +474,34 @@ onclick="newRound()">
 </div>
 
 
-<div class="card">
+<div class="card" style="margin-top:20px">
+
+<h2>🏆 Buzz Sequence</h2>
 
 <div
-class="winner"
-id="winner">
-WAITING FOR BUZZES...
-</div>
+id="hostSequence"
+class="sequence">
 
-<p
-class="status"
-id="hostStatus">
-🟢 BUZZERS READY
+<p class="subtitle">
+No one has buzzed yet.
 </p>
 
 </div>
 
-
-<div class="card">
-
-<h2>
-🏆 BUZZ SEQUENCE
-</h2>
-
-<p class="small">
-Players are listed in the exact order they buzzed.
-</p>
-
-<ol
-class="sequence"
-id="buzzes">
-</ol>
-
 </div>
 
 
-<div class="card">
+<div class="card" style="margin-top:20px">
 
 <h2>
 Players Online:
-<span id="count">0</span>/100
+<span id="playerCount">0</span>/100
 </h2>
 
-<div id="players"></div>
+<div
+id="playerList"
+class="players">
+</div>
 
 </div>
 
@@ -339,375 +513,721 @@ Players Online:
 
 <section id="player" class="hidden">
 
-<div class="card">
+<div class="card center">
 
-<h2
-id="welcome">
-HEY! 👋
-</h2>
+<div class="room">
+
+<div class="room-label">
+ROOM CODE
+</div>
 
 <div
-class="status"
-id="pstatus">
-WAITING FOR THE HOST...
+id="playerCode"
+class="room-code">
+------
+</div>
+
 </div>
 
 
+<div
+id="playerName"
+class="player-name">
+Hey, <span>PLAYER!</span> 👋
+</div>
+
+<p class="subtitle">
+Tap the button as fast as you can!
+</p>
+
+
+<div class="buzzer-wrap">
+
 <button
-id="buzz"
-class="big"
+id="buzzButton"
+class="buzzer"
 onclick="buzz()">
 
+⚡<br>
 BUZZ!
 
 </button>
 
+</div>
+
 
 <div
-class="you"
-id="pres">
+id="playerStatus"
+class="status">
+
+🟢 Waiting for the host to start the round...
+
 </div>
 
 </div>
 
 </section>
 
+</main>
+
+
+<footer>
+♡ Made with passion by INC ATLAS
+</footer>
+
 </div>
+
 
 
 <script>
 
-const socket = io();
+const socket = io({
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000
+});
 
-let mode = "";
-let room = "";
-let playerName = "";
-let myBuzzRank = null;
+
+let mode = null;
+let room = null;
+let playerName = null;
 
 
-const $ = id =>
-document.getElementById(id);
+/*
+==================================================
+LOCAL STORAGE
+==================================================
+*/
 
+const savedRoom =
+localStorage.getItem("brandRouletteRoom");
+
+const savedName =
+localStorage.getItem("brandRouletteName");
+
+const savedMode =
+localStorage.getItem("brandRouletteMode");
+
+
+/*
+==================================================
+HELPERS
+==================================================
+*/
 
 function show(id) {
 
-["home", "host", "player"].forEach(x =>
-$(x).classList.add("hidden")
-);
+  ["home", "host", "player"].forEach(section => {
 
-$(id).classList.remove("hidden");
+    document
+      .getElementById(section)
+      .classList.add("hidden");
+
+  });
+
+  document
+    .getElementById(id)
+    .classList.remove("hidden");
 
 }
 
 
 function error(message) {
 
-$("err").textContent = message || "";
+  document.getElementById("error").textContent =
+    message || "";
 
 }
 
 
+function escapeHTML(value) {
 
-/* CREATE HOST ROOM */
-
-function createRoom() {
-
-socket.emit(
-"host:create",
-{},
-response => {
-
-if (!response.ok) {
-
-error(response.error);
-
-return;
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 }
 
-room = response.code;
-
-$("roomCode").textContent = room;
-
-mode = "host";
-
-show("host");
-
-}
-);
-
-}
-
-
-
-/* JOIN PLAYER */
-
-function joinPlayer() {
-
-room = $("code").value.trim();
-
-playerName = $("name").value.trim();
-
-
-socket.emit(
-"player:join",
-{
-code: room,
-name: playerName
-},
-response => {
-
-if (!response.ok) {
-
-error(response.error);
-
-return;
-
-}
-
-playerName = response.name;
-
-mode = "player";
-
-$("welcome").textContent =
-"HEY, " + playerName + " 👋";
-
-show("player");
-
-}
-);
-
-}
-
-
-
-/* BUZZ */
-
-function buzz() {
-
-if (!playerName) return;
-
-socket.emit(
-"buzz",
-{},
-response => {
-
-if (!response.ok) return;
-
-}
-);
-
-}
-
-
-
-/* NEW ROUND */
-
-function newRound() {
-
-myBuzzRank = null;
-
-socket.emit("host:newRound");
-
-}
-
-
-
-/* RECEIVE LIVE STATE */
-
-socket.on(
-"state",
-state => {
-
-
-/* ================= HOST ================= */
-
-if (mode === "host") {
-
-
-if (state.buzzes.length > 0) {
-
-$("winner").textContent =
-"🥇 " + state.buzzes[0].name;
-
-$("hostStatus").textContent =
-"🔴 BUZZES COMING IN — #" +
-state.buzzes.length +
-" BUZZED";
-
-} else {
-
-$("winner").textContent =
-"WAITING FOR BUZZES...";
-
-$("hostStatus").textContent =
-"🟢 BUZZERS READY";
-
-}
-
-
-
-/* BUZZ SEQUENCE */
-
-$("buzzes").innerHTML =
-state.buzzes.length
-
-?
-
-state.buzzes.map(
-buzz => {
-
-let medal = "";
-
-if (buzz.rank === 1)
-medal = "🥇";
-
-else if (buzz.rank === 2)
-medal = "🥈";
-
-else if (buzz.rank === 3)
-medal = "🥉";
-
-
-return `
-<li>
-<span class="rank">
-${medal || "#" + buzz.rank}
-</span>
-
-<b>
-${esc(buzz.name)}
-</b>
-</li>
-`;
-
-}
-).join("")
-
-:
-
-"<li class='small'>Nobody has buzzed yet.</li>";
-
-
-
-/* PLAYER COUNT */
-
-$("count").textContent =
-state.players.length;
-
-
-
-/* ONLINE PLAYERS */
-
-$("players").innerHTML =
-state.players.map(
-player =>
-`
-<span class="pill">
-${esc(player.name)}
-</span>
-`
-).join("");
-
-}
-
-
-
-/* ================= PLAYER ================= */
-
-if (mode === "player") {
 
 
 /*
-Find THIS player's buzz
-using their socket ID.
+==================================================
+CREATE HOST
+==================================================
 */
 
-const myBuzz =
-state.buzzes.find(
-buzz =>
-buzz.id === socket.id
-);
+function createRoom() {
 
+  socket.emit(
+    "host:create",
+    {},
+    response => {
 
-if (myBuzz) {
+      if (!response.ok) {
 
-myBuzzRank = myBuzz.rank;
+        error(response.error);
 
-$("buzz").disabled = true;
+        return;
 
-$("buzz").textContent =
-"YOU'RE #" + myBuzz.rank;
+      }
 
-$("pres").textContent =
-"🔥 You buzzed #" +
-myBuzz.rank +
-" in the sequence!";
+      mode = "host";
+      room = response.code;
 
-$("pstatus").textContent =
-"BUZZ RECORDED ✅";
+      localStorage.setItem(
+        "brandRouletteRoom",
+        room
+      );
 
+      localStorage.setItem(
+        "brandRouletteMode",
+        "host"
+      );
 
-} else {
+      document.getElementById(
+        "hostCode"
+      ).textContent = room;
 
-$("buzz").disabled = false;
+      document
+        .getElementById("leaveBtn")
+        .classList.remove("hidden");
 
-$("buzz").textContent =
-"BUZZ!";
+      show("host");
 
-$("pres").textContent = "";
-
-$("pstatus").textContent =
-"🟢 TAP BUZZ AS FAST AS YOU CAN!";
+    }
+  );
 
 }
 
-}
+
+
+/*
+==================================================
+JOIN PLAYER
+==================================================
+*/
+
+function joinRoom() {
+
+  const code =
+    document
+      .getElementById("roomInput")
+      .value
+      .trim();
+
+  const name =
+    document
+      .getElementById("nameInput")
+      .value
+      .trim();
+
+
+  if (!code || code.length !== 6) {
+
+    error("Enter the 6-digit room code.");
+
+    return;
+
+  }
+
+
+  if (!name) {
+
+    error("Enter your name.");
+
+    return;
+
+  }
+
+
+  socket.emit(
+    "player:join",
+    {
+      code,
+      name
+    },
+    response => {
+
+      if (!response.ok) {
+
+        error(response.error);
+
+        return;
+
+      }
+
+      mode = "player";
+      room = code;
+      playerName = response.name;
+
+
+      savePlayer();
+
+
+      setupPlayer();
+
+    }
+  );
 
 }
-);
 
 
 
-/* HOST DISCONNECTED */
+/*
+==================================================
+SAVE PLAYER
+==================================================
+*/
+
+function savePlayer() {
+
+  localStorage.setItem(
+    "brandRouletteRoom",
+    room
+  );
+
+  localStorage.setItem(
+    "brandRouletteName",
+    playerName
+  );
+
+  localStorage.setItem(
+    "brandRouletteMode",
+    "player"
+  );
+
+}
+
+
+
+/*
+==================================================
+SETUP PLAYER
+==================================================
+*/
+
+function setupPlayer() {
+
+  document.getElementById(
+    "playerCode"
+  ).textContent = room;
+
+
+  document.getElementById(
+    "playerName"
+  ).innerHTML =
+    `Hey, <span>${escapeHTML(playerName)}!</span> 👋`;
+
+
+  document
+    .getElementById("leaveBtn")
+    .classList.remove("hidden");
+
+
+  show("player");
+
+}
+
+
+
+/*
+==================================================
+BUZZ
+==================================================
+*/
+
+function buzz() {
+
+  const button =
+    document.getElementById("buzzButton");
+
+
+  if (button.disabled) return;
+
+
+  button.disabled = true;
+
+
+  socket.emit(
+    "buzz",
+    {},
+    response => {
+
+      if (!response.ok) {
+
+        button.disabled = false;
+
+        return;
+
+      }
+
+
+      button.innerHTML =
+        `⚡<br>YOU'RE #${response.rank}!`;
+
+    }
+  );
+
+}
+
+
+
+/*
+==================================================
+NEW ROUND
+==================================================
+*/
+
+function newRound() {
+
+  socket.emit(
+    "host:newRound"
+  );
+
+}
+
+
+
+/*
+==================================================
+LEAVE ROOM
+==================================================
+*/
+
+function leaveRoom() {
+
+  const confirmed =
+    confirm(
+      "Are you sure you want to leave this room?"
+    );
+
+
+  if (!confirmed) return;
+
+
+  socket.emit(
+    "leaveRoom",
+    {},
+    () => {
+
+      localStorage.removeItem(
+        "brandRouletteRoom"
+      );
+
+      localStorage.removeItem(
+        "brandRouletteName"
+      );
+
+      localStorage.removeItem(
+        "brandRouletteMode"
+      );
+
+
+      mode = null;
+      room = null;
+      playerName = null;
+
+
+      document
+        .getElementById("leaveBtn")
+        .classList.add("hidden");
+
+
+      show("home");
+
+    }
+  );
+
+}
+
+
+
+/*
+==================================================
+RECEIVE STATE
+==================================================
+*/
 
 socket.on(
-"hostGone",
-() => {
+  "state",
+  state => {
 
-if (mode === "player") {
 
-$("pstatus").textContent =
-"Host disconnected. Please wait.";
+    if (mode === "host") {
 
-$("buzz").disabled = true;
+      renderHost(state);
 
-}
+    }
 
-}
+
+    if (mode === "player") {
+
+      renderPlayer(state);
+
+    }
+
+  }
 );
 
 
 
-/* SECURITY / HTML ESCAPE */
+/*
+==================================================
+HOST DISPLAY
+==================================================
+*/
 
-function esc(value) {
+function renderHost(state) {
 
-return String(value).replace(
-/[&<>"']/g,
-character => ({
+  document.getElementById(
+    "playerCount"
+  ).textContent =
+    state.players.length;
 
-"&": "&amp;",
-"<": "&lt;",
-">": "&gt;",
-'"': "&quot;",
-"'": "&#39;"
 
-}[character])
+  document.getElementById(
+    "playerList"
+  ).innerHTML =
+    state.players.map(
+      player =>
+        `<div class="player-pill">
+          ${escapeHTML(player.name)}
+        </div>`
+    ).join("");
 
-);
+
+  const sequence =
+    document.getElementById(
+      "hostSequence"
+    );
+
+
+  if (!state.buzzes.length) {
+
+    sequence.innerHTML =
+      `<p class="subtitle">
+        No one has buzzed yet.
+      </p>`;
+
+    return;
+
+  }
+
+
+  sequence.innerHTML =
+    state.buzzes.map(
+      buzz => {
+
+        let medal = "";
+
+        if (buzz.rank === 1)
+          medal = "🥇";
+
+        else if (buzz.rank === 2)
+          medal = "🥈";
+
+        else if (buzz.rank === 3)
+          medal = "🥉";
+
+
+        return `
+          <div class="sequence-row">
+
+            <div class="rank big">
+              ${medal || "#" + buzz.rank}
+            </div>
+
+            <div>
+              <strong>
+                ${escapeHTML(buzz.name)}
+              </strong>
+            </div>
+
+          </div>
+        `;
+
+      }
+    ).join("");
 
 }
+
+
+
+/*
+==================================================
+PLAYER DISPLAY
+==================================================
+*/
+
+function renderPlayer(state) {
+
+  const myBuzz =
+    state.buzzes.find(
+      buzz =>
+        buzz.id === socket.id
+    );
+
+
+  const button =
+    document.getElementById(
+      "buzzButton"
+    );
+
+
+  const status =
+    document.getElementById(
+      "playerStatus"
+    );
+
+
+  /*
+    IMPORTANT:
+
+    If the player has a saved
+    previous buzz but the socket ID
+    changed because of reload,
+    the server will send a
+    player-specific "myBuzz" field.
+  */
+
+
+  if (state.myBuzz) {
+
+    button.disabled = true;
+
+    button.innerHTML =
+      `⚡<br>YOU'RE #${state.myBuzz.rank}!`;
+
+    status.innerHTML =
+      `<span class="success">
+        🔥 Buzz recorded — you are #${state.myBuzz.rank}
+      </span>`;
+
+    return;
+
+  }
+
+
+  if (myBuzz) {
+
+    button.disabled = true;
+
+    button.innerHTML =
+      `⚡<br>YOU'RE #${myBuzz.rank}!`;
+
+    status.innerHTML =
+      `<span class="success">
+        🔥 Buzz recorded — you are #${myBuzz.rank}
+      </span>`;
+
+    return;
+
+  }
+
+
+  button.disabled = false;
+
+  button.innerHTML =
+    `⚡<br>BUZZ!`;
+
+  status.textContent =
+    "🟢 Tap the button as fast as you can!";
+
+}
+
+
+
+/*
+==================================================
+AUTOMATIC RECONNECT
+==================================================
+*/
+
+socket.on(
+  "connect",
+  () => {
+
+    /*
+      If the browser was reloaded,
+      reconnect automatically.
+    */
+
+    if (
+      savedRoom &&
+      savedName &&
+      savedMode === "player" &&
+      !mode
+    ) {
+
+      socket.emit(
+        "player:reconnect",
+        {
+          code: savedRoom,
+          name: savedName
+        },
+        response => {
+
+          if (!response.ok) {
+
+            localStorage.removeItem(
+              "brandRouletteRoom"
+            );
+
+            localStorage.removeItem(
+              "brandRouletteName"
+            );
+
+            localStorage.removeItem(
+              "brandRouletteMode"
+            );
+
+            return;
+
+          }
+
+
+          mode = "player";
+          room = savedRoom;
+          playerName = response.name;
+
+
+          setupPlayer();
+
+        }
+      );
+
+    }
+
+  }
+);
+
+
+
+/*
+==================================================
+CONNECTION STATUS
+==================================================
+*/
+
+socket.on(
+  "disconnect",
+  () => {
+
+    if (mode === "player") {
+
+      document.getElementById(
+        "playerStatus"
+      ).textContent =
+        "🔄 Reconnecting...";
+
+    }
+
+  }
+);
 
 </script>
 
