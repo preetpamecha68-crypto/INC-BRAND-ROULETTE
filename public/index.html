@@ -3,23 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>INC Atlas Presents Brand Roulette</title>
 
 <script src="/socket.io/socket.io.js"></script>
 
 <style>
+
 * {
   box-sizing: border-box;
 }
 
 :root {
-  --bg: #020b24;
-  --bg2: #061744;
+  --bg: #020817;
+  --bg2: #061844;
   --blue: #245cff;
-  --blue2: #4d7cff;
+  --blue2: #5b83ff;
   --text: #ffffff;
   --muted: #aeb9d4;
-  --border: rgba(72,119,255,.45);
+  --border: rgba(77,124,255,.4);
 }
 
 body {
@@ -27,8 +29,14 @@ body {
   min-height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
   color: var(--text);
+
   background:
-    radial-gradient(circle at 50% 45%, #092b78 0%, #04143d 38%, #020817 75%);
+    radial-gradient(
+      circle at 50% 42%,
+      #0b2d7d 0%,
+      #061744 38%,
+      #020817 78%
+    );
 }
 
 button,
@@ -44,121 +52,241 @@ button {
   display: none !important;
 }
 
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+
+/* ================= HEADER ================= */
 
 header {
+
   height: 92px;
-  padding: 18px 4%;
+
+  padding: 14px 4%;
+
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
-  border-bottom: 1px solid rgba(90,130,255,.3);
-  background: rgba(1,8,28,.55);
+
+  border-bottom:
+    1px solid rgba(90,130,255,.25);
+
+  background:
+    rgba(1,8,28,.65);
+
   backdrop-filter: blur(15px);
+
+  position: relative;
+
+  z-index: 5;
 }
 
-.logo {
-  font-weight: 900;
-  font-size: 28px;
-  letter-spacing: -2px;
-}
 
-.logo small {
+/* ACTUAL INC LOGO */
+
+.inc-logo {
+
+  width: 64px;
+
+  height: 64px;
+
+  object-fit: contain;
+
   display: block;
-  font-size: 8px;
-  letter-spacing: 1px;
-  margin-top: -3px;
-  opacity: .8;
 }
+
+
+/* BRAND ROULETTE TITLE */
 
 .brand {
+
   position: absolute;
+
   left: 50%;
+
   transform: translateX(-50%);
-  font-size: clamp(24px, 4vw, 42px);
+
+  font-size:
+    clamp(23px, 4vw, 40px);
+
   font-weight: 900;
+
   letter-spacing: 1px;
+
+  white-space: nowrap;
 }
 
 .brand span {
-  color: #5b83ff;
+  color: var(--blue2);
 }
+
+
+/* LEAVE BUTTON */
 
 .leave {
+
   background: transparent;
-  border: 1px solid var(--border);
+
+  border:
+    1px solid var(--border);
+
   color: white;
+
   padding: 11px 17px;
+
   border-radius: 12px;
+
+  font-weight: 700;
 }
 
+.leave:hover {
+  background: rgba(77,124,255,.12);
+}
+
+
+/* ================= MAIN ================= */
+
 main {
-  flex: 1;
-  width: min(1050px, 94%);
+
+  min-height:
+    calc(100vh - 140px);
+
+  width:
+    min(1050px, 94%);
+
   margin: auto;
+
   padding: 35px 0;
 }
 
+
 .card {
-  background: rgba(2,12,40,.7);
-  border: 1px solid rgba(77,124,255,.35);
+
+  background:
+    rgba(2,12,40,.72);
+
+  border:
+    1px solid rgba(77,124,255,.32);
+
   border-radius: 24px;
+
   padding: 28px;
-  box-shadow: 0 20px 70px rgba(0,0,0,.25);
+
+  box-shadow:
+    0 20px 70px rgba(0,0,0,.3);
+
   backdrop-filter: blur(15px);
 }
+
 
 .center {
   text-align: center;
 }
 
-h1 {
-  font-size: clamp(34px, 7vw, 65px);
-  margin: 15px 0;
+
+/* ================= HOME ================= */
+
+.hero {
+
+  padding:
+    50px 25px;
+
+  margin-bottom: 20px;
 }
 
-h2 {
-  margin-top: 0;
+.hero-logo {
+
+  width: 105px;
+
+  height: 105px;
+
+  object-fit: contain;
+
+  margin: 0 auto 18px;
+}
+
+h1 {
+
+  font-size:
+    clamp(38px, 8vw, 70px);
+
+  margin: 10px 0;
+
+  line-height: .95;
+}
+
+h1 span {
+  color: var(--blue2);
 }
 
 .subtitle {
+
   color: var(--muted);
-  font-size: 18px;
+
+  font-size: 17px;
+
+  line-height: 1.5;
 }
 
+
 .grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
   gap: 20px;
 }
 
+
 input {
+
   width: 100%;
+
   padding: 15px;
+
   margin: 7px 0;
+
   border-radius: 12px;
-  border: 1px solid #294a9d;
-  background: rgba(4,16,48,.9);
+
+  border:
+    1px solid #294a9d;
+
+  background:
+    rgba(4,16,48,.9);
+
   color: white;
+
   outline: none;
 }
 
 input:focus {
-  border-color: #5b83ff;
+  border-color: var(--blue2);
 }
 
+
 .primary {
+
   width: 100%;
+
   padding: 15px;
+
   margin-top: 10px;
+
   border: 0;
+
   border-radius: 12px;
-  background: linear-gradient(135deg, #255cff, #4b7bff);
+
+  background:
+    linear-gradient(
+      135deg,
+      #255cff,
+      #4b7bff
+    );
+
   color: white;
+
   font-weight: 900;
 }
 
@@ -166,128 +294,255 @@ input:focus {
   filter: brightness(1.12);
 }
 
+
+/* ================= ROOM CODE ================= */
+
 .room {
-  width: min(270px, 90%);
+
+  width:
+    min(280px, 90%);
+
   margin: auto;
-  padding: 15px;
-  border: 1px solid var(--border);
+
+  padding: 16px;
+
+  border:
+    1px solid var(--border);
+
   border-radius: 18px;
-  background: rgba(0,0,0,.22);
+
+  background:
+    rgba(0,0,0,.2);
 }
 
 .room-label {
+
   color: var(--muted);
-  font-size: 14px;
+
+  font-size: 13px;
+
+  letter-spacing: 1px;
 }
 
 .room-code {
+
   font-size: 38px;
+
   font-weight: 900;
+
   letter-spacing: 7px;
-  color: #4d7cff;
+
+  color: var(--blue2);
+
   margin-top: 5px;
 }
 
+
+/* ================= PLAYER ================= */
+
 .player-name {
-  font-size: clamp(28px, 5vw, 45px);
+
+  font-size:
+    clamp(28px, 5vw, 45px);
+
   font-weight: 900;
+
   margin-top: 25px;
 }
 
 .player-name span {
-  color: #4d7cff;
+  color: var(--blue2);
 }
+
+
+/* ================= BUZZER ================= */
 
 .buzzer-wrap {
+
   display: flex;
+
   justify-content: center;
+
   align-items: center;
-  margin: 35px auto;
+
+  margin:
+    35px auto;
 }
 
+
 .buzzer {
-  width: min(330px, 68vw);
-  height: min(330px, 68vw);
+
+  width:
+    min(330px, 68vw);
+
+  height:
+    min(330px, 68vw);
+
   max-width: 330px;
+
   max-height: 330px;
+
   border-radius: 50%;
-  border: 12px solid rgba(0,0,0,.5);
-  background: radial-gradient(circle at 35% 25%, #527fff, #1948e8 55%, #0b2bb5);
+
+  border:
+    12px solid rgba(0,0,0,.45);
+
+  background:
+    radial-gradient(
+      circle at 35% 25%,
+      #638dff,
+      #1948e8 55%,
+      #0926a8
+    );
+
   box-shadow:
+
     0 0 0 2px #4979ff,
-    0 0 60px rgba(36,92,255,.7),
-    inset 0 -20px 30px rgba(0,0,0,.25);
+
+    0 0 65px
+      rgba(36,92,255,.7),
+
+    inset 0 -20px 30px
+      rgba(0,0,0,.25);
+
   color: white;
-  font-size: clamp(34px, 7vw, 58px);
+
+  font-size:
+    clamp(34px, 7vw, 58px);
+
   font-weight: 900;
+
   transition: .12s;
 }
 
+.buzzer:hover {
+
+  transform:
+    scale(1.025);
+
+  box-shadow:
+
+    0 0 0 2px #638dff,
+
+    0 0 85px
+      rgba(36,92,255,.85),
+
+    inset 0 -20px 30px
+      rgba(0,0,0,.25);
+}
+
 .buzzer:active {
-  transform: scale(.96);
+
+  transform:
+    scale(.95);
 }
 
 .buzzer:disabled {
+
   opacity: .65;
-  cursor: not-allowed;
+
+  cursor:
+    not-allowed;
 }
 
+
+/* ================= STATUS ================= */
+
 .status {
-  width: min(700px, 100%);
+
+  width:
+    min(700px, 100%);
+
   margin: auto;
+
   padding: 18px;
+
   border-radius: 15px;
-  border: 1px solid rgba(72,119,255,.35);
-  background: rgba(0,0,0,.2);
+
+  border:
+    1px solid
+    rgba(72,119,255,.35);
+
+  background:
+    rgba(0,0,0,.2);
+
   color: var(--muted);
+
   text-align: center;
 }
+
+
+/* ================= HOST SEQUENCE ================= */
 
 .sequence {
   margin-top: 25px;
 }
 
 .sequence-row {
-  display: flex;
-  align-items: center;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
   gap: 15px;
+
   padding: 15px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+
+  border-bottom:
+    1px solid
+    rgba(255,255,255,.08);
 }
 
 .rank {
-  width: 45px;
+
+  width: 50px;
+
   font-weight: 900;
-  color: #5b83ff;
+
+  color: var(--blue2);
+
+  font-size: 20px;
 }
 
 .rank.big {
-  font-size: 25px;
+  font-size: 27px;
 }
 
+
+/* ================= PLAYER LIST ================= */
+
 .players {
+
   display: flex;
+
   flex-wrap: wrap;
+
   gap: 8px;
 }
 
 .player-pill {
+
   padding: 8px 12px;
+
   border-radius: 100px;
+
   background: #10275e;
-  border: 1px solid #284ca0;
+
+  border:
+    1px solid #284ca0;
 }
 
-footer {
-  text-align: center;
-  padding: 18px;
-  color: #7180a4;
-  font-size: 14px;
-}
+
+/* ================= MESSAGES ================= */
 
 .error {
+
   color: #ff7184;
+
   text-align: center;
+
   margin-top: 10px;
 }
 
@@ -295,225 +550,290 @@ footer {
   color: #65e89b;
 }
 
-@media(max-width: 700px) {
+
+/* ================= FOOTER ================= */
+
+footer {
+
+  text-align: center;
+
+  padding: 18px;
+
+  color: #7180a4;
+
+  font-size: 13px;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:700px) {
 
   header {
-    height: 75px;
-    padding: 14px 18px;
+
+    height: 78px;
+
+    padding:
+      10px 17px;
   }
 
-  .logo {
-    font-size: 21px;
+  .inc-logo {
+
+    width: 54px;
+
+    height: 54px;
   }
 
   .brand {
+
     display: none;
   }
 
   .leave {
-    padding: 9px 12px;
+
+    padding:
+      9px 12px;
+
     font-size: 13px;
   }
 
   main {
-    padding: 20px 0;
+
+    padding:
+      20px 0;
   }
 
   .card {
-    padding: 20px;
-    border-radius: 20px;
+
+    padding:
+      20px;
+
+    border-radius:
+      20px;
   }
 
   .grid {
-    grid-template-columns: 1fr;
+
+    grid-template-columns:
+      1fr;
+  }
+
+  .hero {
+
+    padding:
+      35px 18px;
+  }
+
+  .hero-logo {
+
+    width: 85px;
+
+    height: 85px;
   }
 
   .buzzer-wrap {
-    margin: 25px auto;
+
+    margin:
+      25px auto;
   }
 
   footer {
-    padding-bottom: 25px;
+
+    padding-bottom:
+      25px;
   }
+
 }
+
 </style>
 </head>
 
+
 <body>
+
 
 <div class="page">
 
+
+<!-- ================= HEADER ================= -->
+
 <header>
 
-<div class="logo">
-INC
-<small>THE CORPORATE CLUB</small>
-</div>
+<img
+  src="/inc-logo.png"
+  alt="INC The Corporate Club"
+  class="inc-logo"
+>
+
 
 <div class="brand">
 BRAND <span>ROULETTE</span>
 </div>
 
+
 <button
-id="leaveBtn"
-class="leave hidden"
-onclick="leaveRoom()">
+  id="leaveBtn"
+  class="leave hidden"
+  onclick="leaveRoom()">
+
 Leave Room ↗
+
 </button>
 
 </header>
 
 
+
 <main>
 
-<!-- HOME -->
 
-<section id="home" class="card">
+<!-- ================= HOME ================= -->
 
-<div class="center">
+<section
+  id="home"
+  class="card hero center">
 
-<h1>BRAND <span style="color:#4d7cff">ROULETTE</span></h1>
 
-<p class="subtitle">
+<img
+  src="/inc-logo.png"
+  alt="INC Logo"
+  class="hero-logo"
+>
+
+
+<p
+  class="subtitle">
+
 INC ATLAS PRESENTS
+
 </p>
 
-</div>
 
-<div class="grid">
+<h1>
 
-<div class="card">
+BRAND
+<span>ROULETTE</span>
 
-<h2>🎤 Host</h2>
+</h1>
+
 
 <p class="subtitle">
-Create a room and display the code for everyone.
+
+The ultimate live brand quiz.
+
 </p>
 
-<button
-class="primary"
-onclick="createRoom()">
-CREATE HOST ROOM
-</button>
-
-</div>
-
-
-<div class="card">
-
-<h2>📱 Player</h2>
-
-<p class="subtitle">
-Enter your room code and name.
-</p>
-
-<input
-id="roomInput"
-placeholder="6-digit room code"
-maxlength="6"
-inputmode="numeric">
-
-<input
-id="nameInput"
-placeholder="Your name"
-maxlength="30">
-
-<button
-class="primary"
-onclick="joinRoom()">
-JOIN BUZZER
-</button>
-
-</div>
-
-</div>
-
-<div
-id="error"
-class="error">
-</div>
 
 </section>
 
+
+
+<section
+  class="grid">
 
 
 <!-- HOST -->
 
-<section id="host" class="hidden">
+<div class="card">
 
-<div class="card center">
-
-<div class="room">
-
-<div class="room-label">
-ROOM CODE
-</div>
-
-<div
-id="hostCode"
-class="room-code">
-------
-</div>
-
-</div>
-
-<h2 style="margin-top:25px">
-Waiting for players...
+<h2>
+🎤 Host
 </h2>
 
 <p class="subtitle">
-Players can join using the room code above.
+
+Create a room and display
+the code for everyone.
+
 </p>
 
+
 <button
-class="primary"
-onclick="newRound()">
-🔄 NEW ROUND
+  class="primary"
+  onclick="createRoom()">
+
+CREATE HOST ROOM
+
 </button>
 
 </div>
-
-
-<div class="card" style="margin-top:20px">
-
-<h2>🏆 Buzz Sequence</h2>
-
-<div
-id="hostSequence"
-class="sequence">
-
-<p class="subtitle">
-No one has buzzed yet.
-</p>
-
-</div>
-
-</div>
-
-
-<div class="card" style="margin-top:20px">
-
-<h2>
-Players Online:
-<span id="playerCount">0</span>/100
-</h2>
-
-<div
-id="playerList"
-class="players">
-</div>
-
-</div>
-
-</section>
 
 
 
 <!-- PLAYER -->
 
-<section id="player" class="hidden">
+<div class="card">
 
-<div class="card center">
+<h2>
+📱 Player
+</h2>
+
+<p class="subtitle">
+
+Enter the room code and
+your name.
+
+</p>
+
+
+<input
+  id="roomInput"
+  placeholder="6-digit room code"
+  maxlength="6"
+  inputmode="numeric"
+>
+
+
+<input
+  id="nameInput"
+  placeholder="Your name"
+  maxlength="30"
+>
+
+
+<button
+  class="primary"
+  onclick="joinRoom()">
+
+JOIN BUZZER
+
+</button>
+
+</div>
+
+
+</section>
+
+
+<div
+  id="error"
+  class="error">
+</div>
+
+
+
+<!-- ================= HOST ================= -->
+
+<section
+  id="host"
+  class="hidden">
+
+
+<div
+  class="card center">
+
+
+<img
+  src="/inc-logo.png"
+  alt="INC"
+  style="
+    width:75px;
+    height:75px;
+    object-fit:contain;
+    margin-bottom:15px;
+  "
+>
+
 
 <div class="room">
 
@@ -522,8 +842,127 @@ ROOM CODE
 </div>
 
 <div
-id="playerCode"
-class="room-code">
+  id="hostCode"
+  class="room-code">
+------
+</div>
+
+</div>
+
+
+<h2 style="margin-top:25px">
+
+Waiting for players...
+
+</h2>
+
+
+<p class="subtitle">
+
+Players can join using
+the room code above.
+
+</p>
+
+
+<button
+  class="primary"
+  onclick="newRound()">
+
+🔄 NEW ROUND
+
+</button>
+
+</div>
+
+
+
+<div
+  class="card"
+  style="margin-top:20px">
+
+
+<h2>
+🏆 Buzz Sequence
+</h2>
+
+
+<div
+  id="hostSequence"
+  class="sequence">
+
+<p class="subtitle">
+
+No one has buzzed yet.
+
+</p>
+
+</div>
+
+
+</div>
+
+
+
+<div
+  class="card"
+  style="margin-top:20px">
+
+
+<h2>
+
+Players Online:
+<span id="playerCount">
+0
+</span>/100
+
+</h2>
+
+
+<div
+  id="playerList"
+  class="players">
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- ================= PLAYER ================= -->
+
+<section
+  id="player"
+  class="hidden">
+
+
+<div
+  class="card center">
+
+
+<img
+  src="/inc-logo.png"
+  alt="INC"
+  style="
+    width:70px;
+    height:70px;
+    object-fit:contain;
+  "
+>
+
+
+<div class="room">
+
+<div class="room-label">
+ROOM CODE
+</div>
+
+<div
+  id="playerCode"
+  class="room-code">
 ------
 </div>
 
@@ -531,49 +970,64 @@ class="room-code">
 
 
 <div
-id="playerName"
-class="player-name">
-Hey, <span>PLAYER!</span> 👋
+  id="playerName"
+  class="player-name">
+
+Hey,
+<span>PLAYER!</span>
+👋
+
 </div>
 
+
 <p class="subtitle">
+
 Tap the button as fast as you can!
+
 </p>
 
 
 <div class="buzzer-wrap">
 
+
 <button
-id="buzzButton"
-class="buzzer"
-onclick="buzz()">
+  id="buzzButton"
+  class="buzzer"
+  onclick="buzz()">
 
 ⚡<br>
 BUZZ!
 
 </button>
 
+
 </div>
 
 
 <div
-id="playerStatus"
-class="status">
+  id="playerStatus"
+  class="status">
 
-🟢 Waiting for the host to start the round...
+🟢 Ready to buzz!
+
+</div>
+
 
 </div>
 
-</div>
 
 </section>
+
 
 </main>
 
 
 <footer>
-♡ Made with passion by INC ATLAS
+
+♡ INC ATLAS • BRAND ROULETTE
+
 </footer>
+
 
 </div>
 
@@ -581,50 +1035,73 @@ class="status">
 
 <script>
 
+
+/* ==================================================
+SOCKET
+================================================== */
+
 const socket = io({
+
   reconnection: true,
+
   reconnectionAttempts: Infinity,
+
   reconnectionDelay: 1000,
+
   reconnectionDelayMax: 5000
+
 });
 
 
 let mode = null;
+
 let room = null;
+
 let playerName = null;
 
 
-/*
-==================================================
-LOCAL STORAGE
-==================================================
-*/
+
+/* ==================================================
+SAVED SESSION
+================================================== */
 
 const savedRoom =
-localStorage.getItem("brandRouletteRoom");
+  localStorage.getItem(
+    "brandRouletteRoom"
+  );
+
 
 const savedName =
-localStorage.getItem("brandRouletteName");
+  localStorage.getItem(
+    "brandRouletteName"
+  );
+
 
 const savedMode =
-localStorage.getItem("brandRouletteMode");
+  localStorage.getItem(
+    "brandRouletteMode"
+  );
 
 
-/*
-==================================================
-HELPERS
-==================================================
-*/
+
+/* ==================================================
+SHOW SCREEN
+================================================== */
 
 function show(id) {
 
-  ["home", "host", "player"].forEach(section => {
+  [
+    "home",
+    "host",
+    "player"
+  ].forEach(section => {
 
     document
       .getElementById(section)
       .classList.add("hidden");
 
   });
+
 
   document
     .getElementById(id)
@@ -633,32 +1110,47 @@ function show(id) {
 }
 
 
+
+/* ==================================================
+ERROR
+================================================== */
+
 function error(message) {
 
-  document.getElementById("error").textContent =
-    message || "";
+  document
+    .getElementById("error")
+    .textContent =
+      message || "";
 
 }
 
 
+
+/* ==================================================
+ESCAPE HTML
+================================================== */
+
 function escapeHTML(value) {
 
   return String(value)
+
     .replace(/&/g, "&amp;")
+
     .replace(/</g, "&lt;")
+
     .replace(/>/g, "&gt;")
+
     .replace(/"/g, "&quot;")
+
     .replace(/'/g, "&#039;");
 
 }
 
 
 
-/*
-==================================================
+/* ==================================================
 CREATE HOST
-==================================================
-*/
+================================================== */
 
 function createRoom() {
 
@@ -675,26 +1167,36 @@ function createRoom() {
 
       }
 
+
       mode = "host";
-      room = response.code;
+
+      room =
+        response.code;
+
 
       localStorage.setItem(
         "brandRouletteRoom",
         room
       );
 
+
       localStorage.setItem(
         "brandRouletteMode",
         "host"
       );
 
-      document.getElementById(
-        "hostCode"
-      ).textContent = room;
+
+      document
+        .getElementById("hostCode")
+        .textContent =
+          room;
+
 
       document
         .getElementById("leaveBtn")
-        .classList.remove("hidden");
+        .classList
+        .remove("hidden");
+
 
       show("host");
 
@@ -705,11 +1207,9 @@ function createRoom() {
 
 
 
-/*
-==================================================
+/* ==================================================
 JOIN PLAYER
-==================================================
-*/
+================================================== */
 
 function joinRoom() {
 
@@ -719,6 +1219,7 @@ function joinRoom() {
       .value
       .trim();
 
+
   const name =
     document
       .getElementById("nameInput")
@@ -726,9 +1227,14 @@ function joinRoom() {
       .trim();
 
 
-  if (!code || code.length !== 6) {
+  if (
+    !code ||
+    code.length !== 6
+  ) {
 
-    error("Enter the 6-digit room code.");
+    error(
+      "Enter the 6-digit room code."
+    );
 
     return;
 
@@ -737,7 +1243,9 @@ function joinRoom() {
 
   if (!name) {
 
-    error("Enter your name.");
+    error(
+      "Enter your name."
+    );
 
     return;
 
@@ -754,19 +1262,24 @@ function joinRoom() {
 
       if (!response.ok) {
 
-        error(response.error);
+        error(
+          response.error
+        );
 
         return;
 
       }
 
+
       mode = "player";
+
       room = code;
-      playerName = response.name;
+
+      playerName =
+        response.name;
 
 
       savePlayer();
-
 
       setupPlayer();
 
@@ -777,11 +1290,9 @@ function joinRoom() {
 
 
 
-/*
-==================================================
+/* ==================================================
 SAVE PLAYER
-==================================================
-*/
+================================================== */
 
 function savePlayer() {
 
@@ -790,10 +1301,12 @@ function savePlayer() {
     room
   );
 
+
   localStorage.setItem(
     "brandRouletteName",
     playerName
   );
+
 
   localStorage.setItem(
     "brandRouletteMode",
@@ -804,28 +1317,30 @@ function savePlayer() {
 
 
 
-/*
-==================================================
+/* ==================================================
 SETUP PLAYER
-==================================================
-*/
+================================================== */
 
 function setupPlayer() {
 
-  document.getElementById(
-    "playerCode"
-  ).textContent = room;
+  document
+    .getElementById("playerCode")
+    .textContent =
+      room;
 
 
-  document.getElementById(
-    "playerName"
-  ).innerHTML =
-    `Hey, <span>${escapeHTML(playerName)}!</span> 👋`;
+  document
+    .getElementById("playerName")
+    .innerHTML =
+      `Hey, <span>${escapeHTML(
+        playerName
+      )}!</span> 👋`;
 
 
   document
     .getElementById("leaveBtn")
-    .classList.remove("hidden");
+    .classList
+    .remove("hidden");
 
 
   show("player");
@@ -834,22 +1349,24 @@ function setupPlayer() {
 
 
 
-/*
-==================================================
+/* ==================================================
 BUZZ
-==================================================
-*/
+================================================== */
 
 function buzz() {
 
   const button =
-    document.getElementById("buzzButton");
+    document
+      .getElementById("buzzButton");
 
 
-  if (button.disabled) return;
+  if (
+    button.disabled
+  ) return;
 
 
-  button.disabled = true;
+  button.disabled =
+    true;
 
 
   socket.emit(
@@ -857,9 +1374,12 @@ function buzz() {
     {},
     response => {
 
-      if (!response.ok) {
+      if (
+        !response.ok
+      ) {
 
-        button.disabled = false;
+        button.disabled =
+          false;
 
         return;
 
@@ -876,11 +1396,9 @@ function buzz() {
 
 
 
-/*
-==================================================
+/* ==================================================
 NEW ROUND
-==================================================
-*/
+================================================== */
 
 function newRound() {
 
@@ -892,21 +1410,17 @@ function newRound() {
 
 
 
-/*
-==================================================
+/* ==================================================
 LEAVE ROOM
-==================================================
-*/
+================================================== */
 
 function leaveRoom() {
 
-  const confirmed =
-    confirm(
+  if (
+    !confirm(
       "Are you sure you want to leave this room?"
-    );
-
-
-  if (!confirmed) return;
+    )
+  ) return;
 
 
   socket.emit(
@@ -918,9 +1432,11 @@ function leaveRoom() {
         "brandRouletteRoom"
       );
 
+
       localStorage.removeItem(
         "brandRouletteName"
       );
+
 
       localStorage.removeItem(
         "brandRouletteMode"
@@ -928,13 +1444,16 @@ function leaveRoom() {
 
 
       mode = null;
+
       room = null;
+
       playerName = null;
 
 
       document
         .getElementById("leaveBtn")
-        .classList.add("hidden");
+        .classList
+        .add("hidden");
 
 
       show("home");
@@ -946,27 +1465,33 @@ function leaveRoom() {
 
 
 
-/*
-==================================================
-RECEIVE STATE
-==================================================
-*/
+/* ==================================================
+STATE
+================================================== */
 
 socket.on(
   "state",
   state => {
 
 
-    if (mode === "host") {
+    if (
+      mode === "host"
+    ) {
 
-      renderHost(state);
+      renderHost(
+        state
+      );
 
     }
 
 
-    if (mode === "player") {
+    if (
+      mode === "player"
+    ) {
 
-      renderPlayer(state);
+      renderPlayer(
+        state
+      );
 
     }
 
@@ -975,38 +1500,49 @@ socket.on(
 
 
 
-/*
-==================================================
-HOST DISPLAY
-==================================================
-*/
+/* ==================================================
+HOST
+================================================== */
 
 function renderHost(state) {
 
-  document.getElementById(
-    "playerCount"
-  ).textContent =
-    state.players.length;
+
+  document
+    .getElementById(
+      "playerCount"
+    )
+    .textContent =
+      state.players.length;
 
 
-  document.getElementById(
-    "playerList"
-  ).innerHTML =
-    state.players.map(
-      player =>
-        `<div class="player-pill">
-          ${escapeHTML(player.name)}
-        </div>`
-    ).join("");
+  document
+    .getElementById(
+      "playerList"
+    )
+    .innerHTML =
+
+      state.players
+        .map(
+          player =>
+            `<div class="player-pill">
+              ${escapeHTML(
+                player.name
+              )}
+            </div>`
+        )
+        .join("");
 
 
   const sequence =
-    document.getElementById(
-      "hostSequence"
-    );
+    document
+      .getElementById(
+        "hostSequence"
+      );
 
 
-  if (!state.buzzes.length) {
+  if (
+    !state.buzzes.length
+  ) {
 
     sequence.innerHTML =
       `<p class="subtitle">
@@ -1019,92 +1555,117 @@ function renderHost(state) {
 
 
   sequence.innerHTML =
-    state.buzzes.map(
-      buzz => {
 
-        let medal = "";
+    state.buzzes
+      .map(
+        buzz => {
 
-        if (buzz.rank === 1)
-          medal = "🥇";
-
-        else if (buzz.rank === 2)
-          medal = "🥈";
-
-        else if (buzz.rank === 3)
-          medal = "🥉";
+          let medal = "";
 
 
-        return `
-          <div class="sequence-row">
+          if (
+            buzz.rank === 1
+          )
+            medal = "🥇";
 
-            <div class="rank big">
-              ${medal || "#" + buzz.rank}
+
+          else if (
+            buzz.rank === 2
+          )
+            medal = "🥈";
+
+
+          else if (
+            buzz.rank === 3
+          )
+            medal = "🥉";
+
+
+          return `
+
+            <div class="sequence-row">
+
+              <div class="rank big">
+
+                ${
+                  medal ||
+                  "#" +
+                  buzz.rank
+                }
+
+              </div>
+
+
+              <div>
+
+                <strong>
+
+                  ${escapeHTML(
+                    buzz.name
+                  )}
+
+                </strong>
+
+              </div>
+
             </div>
 
-            <div>
-              <strong>
-                ${escapeHTML(buzz.name)}
-              </strong>
-            </div>
+          `;
 
-          </div>
-        `;
-
-      }
-    ).join("");
+        }
+      )
+      .join("");
 
 }
 
 
 
-/*
-==================================================
-PLAYER DISPLAY
-==================================================
-*/
+/* ==================================================
+PLAYER
+================================================== */
 
-function renderPlayer(state) {
-
-  const myBuzz =
-    state.buzzes.find(
-      buzz =>
-        buzz.id === socket.id
-    );
+function renderPlayer(
+  state
+) {
 
 
   const button =
-    document.getElementById(
-      "buzzButton"
-    );
+    document
+      .getElementById(
+        "buzzButton"
+      );
 
 
   const status =
-    document.getElementById(
-      "playerStatus"
-    );
+    document
+      .getElementById(
+        "playerStatus"
+      );
 
 
-  /*
-    IMPORTANT:
+  if (
+    state.myBuzz
+  ) {
 
-    If the player has a saved
-    previous buzz but the socket ID
-    changed because of reload,
-    the server will send a
-    player-specific "myBuzz" field.
-  */
+    button.disabled =
+      true;
 
-
-  if (state.myBuzz) {
-
-    button.disabled = true;
 
     button.innerHTML =
-      `⚡<br>YOU'RE #${state.myBuzz.rank}!`;
+      `⚡<br>YOU'RE #${
+        state.myBuzz.rank
+      }!`;
+
 
     status.innerHTML =
+
       `<span class="success">
-        🔥 Buzz recorded — you are #${state.myBuzz.rank}
+
+        🔥 Buzz recorded —
+        you are #${
+          state.myBuzz.rank
+        }
+
       </span>`;
 
     return;
@@ -1112,27 +1673,13 @@ function renderPlayer(state) {
   }
 
 
-  if (myBuzz) {
+  button.disabled =
+    false;
 
-    button.disabled = true;
-
-    button.innerHTML =
-      `⚡<br>YOU'RE #${myBuzz.rank}!`;
-
-    status.innerHTML =
-      `<span class="success">
-        🔥 Buzz recorded — you are #${myBuzz.rank}
-      </span>`;
-
-    return;
-
-  }
-
-
-  button.disabled = false;
 
   button.innerHTML =
     `⚡<br>BUZZ!`;
+
 
   status.textContent =
     "🟢 Tap the button as fast as you can!";
@@ -1141,20 +1688,14 @@ function renderPlayer(state) {
 
 
 
-/*
-==================================================
+/* ==================================================
 AUTOMATIC RECONNECT
-==================================================
-*/
+================================================== */
 
 socket.on(
   "connect",
   () => {
 
-    /*
-      If the browser was reloaded,
-      reconnect automatically.
-    */
 
     if (
       savedRoom &&
@@ -1163,15 +1704,23 @@ socket.on(
       !mode
     ) {
 
+
       socket.emit(
         "player:reconnect",
         {
-          code: savedRoom,
-          name: savedName
+          code:
+            savedRoom,
+
+          name:
+            savedName
+
         },
         response => {
 
-          if (!response.ok) {
+
+          if (
+            !response.ok
+          ) {
 
             localStorage.removeItem(
               "brandRouletteRoom"
@@ -1190,9 +1739,16 @@ socket.on(
           }
 
 
-          mode = "player";
-          room = savedRoom;
-          playerName = response.name;
+          mode =
+            "player";
+
+
+          room =
+            savedRoom;
+
+
+          playerName =
+            response.name;
 
 
           setupPlayer();
@@ -1207,22 +1763,25 @@ socket.on(
 
 
 
-/*
-==================================================
-CONNECTION STATUS
-==================================================
-*/
+/* ==================================================
+DISCONNECT
+================================================== */
 
 socket.on(
   "disconnect",
   () => {
 
-    if (mode === "player") {
 
-      document.getElementById(
-        "playerStatus"
-      ).textContent =
-        "🔄 Reconnecting...";
+    if (
+      mode === "player"
+    ) {
+
+      document
+        .getElementById(
+          "playerStatus"
+        )
+        .textContent =
+          "🔄 Reconnecting...";
 
     }
 
